@@ -1,4 +1,5 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1'/>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +10,7 @@
     <!-- إضافة مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     
     <!-- إضافة مكتبة Noty للإشعارات الجميلة -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css">
@@ -613,10 +615,6 @@
             border-right: 4px solid var(--warning);
         }
         
-        .firebase-status.error {
-            border-right: 4px solid var(--danger);
-        }
-        
         .status-dot {
             width: 10px;
             height: 10px;
@@ -629,10 +627,6 @@
         
         .status-dot.offline {
             background-color: var(--warning);
-        }
-        
-        .status-dot.error {
-            background-color: var(--danger);
         }
         
         /* أنماط الإشعارات */
@@ -941,33 +935,6 @@
             box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
             animation: pulse 2s infinite;
         }
-        
-        /* تعديلات للتنبيهات */
-        .connection-alert {
-            background: #fff3e0;
-            border-right: 4px solid #ff9800;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .connection-alert.show {
-            display: block;
-        }
-        
-        .firebase-debug {
-            background: #f5f5f5;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .firebase-debug.show {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -1003,19 +970,6 @@
                 </div>
             </div>
         </header>
-        
-        <!-- تنبيه مشكلة الاتصال -->
-        <div class="connection-alert" id="connection-alert">
-            <h3><i class="fas fa-exclamation-triangle"></i> مشكلة في الاتصال بـ Firebase</h3>
-            <p>لا يمكن الاتصال بقاعدة البيانات. البيانات ستُحفظ محلياً فقط.</p>
-            <div class="firebase-debug" id="firebase-debug">
-                <p><strong>معلومات التصحيح:</strong></p>
-                <p id="debug-info"></p>
-                <button class="btn btn-warning" id="retry-connection">
-                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                </button>
-            </div>
-        </div>
         
         <!-- زر إظهار/إخفاء التقويم -->
         <button class="btn calendar-toggle-btn" id="calendar-toggle">
@@ -1220,7 +1174,17 @@
                         </div>
                     </div>
                     
-                    <!-- تم إزالة Covapraviv من هنا -->
+                    <div class="medication-item" data-med="Covapraviv">
+                        <div class="medication-info">
+                            <div class="med-name">Covapraviv 200 mg</div>
+                            <div class="med-dosage">4 أقراص</div>
+                            <div class="med-notes">كل 12 ساعة - لحين انتهاء الجرعة</div>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" class="med-checkbox" id="med-covapraviv-1" data-med="Covapraviv" data-time="after-breakfast">
+                            <span class="checkmark"></span>
+                        </div>
+                    </div>
                     
                     <div class="medication-item" data-med="Acetyl Cysteine">
                         <div class="medication-info">
@@ -1427,7 +1391,17 @@
                         </div>
                     </div>
                     
-                    <!-- تم إزالة Covapraviv المسائي من هنا -->
+                    <div class="medication-item" data-med="Covapraviv">
+                        <div class="medication-info">
+                            <div class="med-name">Covapraviv 200 mg</div>
+                            <div class="med-dosage">4 أقراص</div>
+                            <div class="med-notes">كل 12 ساعة - الجرعة المسائية</div>
+                        </div>
+                        <div class="checkbox-container">
+                            <input type="checkbox" class="med-checkbox" id="med-covapraviv-2" data-med="Covapraviv" data-time="before-bed">
+                            <span class="checkmark"></span>
+                        </div>
+                    </div>
                     
                     <div class="medication-item" data-med="Acetyl Cysteine">
                         <div class="medication-info">
@@ -1460,9 +1434,6 @@
                         <button class="btn" id="save-data">
                             <i class="fas fa-save"></i> حفظ البيانات يدوياً
                         </button>
-                        <button class="btn btn-warning" id="clear-firebase">
-                            <i class="fas fa-database"></i> تصحيح Firebase
-                        </button>
                     </div>
                 </div>
             </div>
@@ -1493,8 +1464,8 @@
                     <h4><i class="fas fa-history"></i> أدوية متكررة</h4>
                     <p><strong>Aldomet:</strong> 2 قرص كل 8 ساعات (3 مرات يوميًا)</p>
                     <p><strong>Eliquis:</strong> قرص كل 12 ساعة</p>
+                    <p><strong>Covapraviv:</strong> 4 أقراص كل 12 ساعة</p>
                     <p><strong>Acetyl Cysteine:</strong> كيس كل 12 ساعة</p>
-                    <!-- تم إزالة Covapraviv من هنا -->
                 </div>
                 
                 <!-- إشعارات اليوم -->
@@ -1555,7 +1526,6 @@
             <p>نظام متابعة الأدوية المتشارك &copy; 2023 | صمم لمساعدة المرضى ومقدمي الرعاية على متابعة الأدوية بدقة</p>
             <p>جميع المعلومات الطبية يجب مراجعتها مع الطبيب المعالج أو الصيدلي</p>
             <p id="last-save-time" style="margin-top: 10px; font-size: 0.8rem;"></p>
-            <p id="firebase-info" style="font-size: 0.7rem; color: var(--gray);"></p>
         </footer>
     </div>
 
@@ -1571,7 +1541,7 @@
     </div>
 
     <script>
-        // ⚠️ ⚠️ ⚠️ إعدادات Firebase - استخدم كودك ⚠️ ⚠️ ⚠️
+        // ⚠️ ⚠️ ⚠️ تنبيه مهم: استبدل هذا الكود بكود Firebase الخاص بك ⚠️ ⚠️ ⚠️
         const firebaseConfig = {
             apiKey: "AIzaSyAMJjeucsuWiIrOKJ19AK6VT9zLS7ZB6MY",
             authDomain: "medtrackmamdouh.firebaseapp.com",
@@ -1615,7 +1585,7 @@
             { time: "before-bed", hour: 22, minute: 0, name: "قبل النوم" }
         ];
 
-        // جميع الأدوية في النظام (تم إزالة Covapraviv)
+        // جميع الأدوية في النظام
         const allMedications = [
             { id: 'med-examide', name: 'Examide', time: 'morning-fasting', critical: false },
             { id: 'med-norvasc', name: 'Norvasc', time: 'morning-fasting', critical: false },
@@ -1623,6 +1593,7 @@
             { id: 'med-corvid', name: 'Corvid', time: 'morning-fasting', critical: false },
             { id: 'med-aldomet-1', name: 'Aldomet', time: 'after-breakfast', critical: false },
             { id: 'med-eliquis-1', name: 'Eliquis', time: 'after-breakfast', critical: true },
+            { id: 'med-covapraviv-1', name: 'Covapraviv', time: 'after-breakfast', critical: false },
             { id: 'med-acetyl-morning', name: 'Acetyl Cysteine', time: 'after-breakfast', critical: false },
             { id: 'med-forxiga', name: 'Forxiga', time: 'before-lunch', critical: false },
             { id: 'med-suprax', name: 'Suprax', time: 'after-lunch', critical: false },
@@ -1636,6 +1607,7 @@
             { id: 'med-spiriva', name: 'Spiriva', time: 'after-dinner', critical: false },
             { id: 'med-eliquis-2', name: 'Eliquis', time: 'before-bed', critical: true },
             { id: 'med-aldomet-3', name: 'Aldomet', time: 'before-bed', critical: false },
+            { id: 'med-covapraviv-2', name: 'Covapraviv', time: 'before-bed', critical: false },
             { id: 'med-acetyl-night', name: 'Acetyl Cysteine', time: 'before-bed', critical: false }
         ];
 
@@ -1644,18 +1616,20 @@
         let selectedCalendarDate = new Date();
 
         // متغيرات Firebase
-        let firebaseApp = null;
-        let db = null;
+        let firebaseApp;
+        let db;
         let unsubscribeListener = null;
+        let messaging = null;
 
         // متغيرات الإشعارات
         let notificationInterval = null;
         let nextReminder = null;
-        let connectionRetries = 0;
-        const MAX_RETRIES = 3;
 
         // تهيئة التطبيق
         document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة Firebase
+            initializeFirebase();
+            
             // تحديث تاريخ اليوم
             updateCurrentDate();
             
@@ -1671,9 +1645,6 @@
             // تهيئة التقويم
             initCalendar();
             
-            // تهيئة نظام الإشعارات
-            initNotifications();
-            
             // تحديث التقدم
             updateProgress();
             
@@ -1683,318 +1654,55 @@
             // تحديث وقت الحفظ الأخير
             updateLastSaveTime();
             
+            // تحديث التذكيرات
+            updateReminders();
+            
             // التحقق من إذن الإشعارات
             checkNotificationPermission();
             
             // بدء نظام التذكيرات
             startReminderSystem();
-            
-            // محاولة الاتصال بـ Firebase
-            initializeFirebase();
         });
-
-        // تهيئة Firebase مع معالجة الأخطاء المحسنة
-        function initializeFirebase() {
-            try {
-                console.log("🔄 جاري تهيئة Firebase...");
-                
-                // إغلاق أي اتصال سابق
-                if (firebaseApp) {
-                    try {
-                        firebase.app().delete();
-                    } catch (e) {
-                        console.log("ℹ️ لا يوجد تطبيق Firebase سابق");
-                    }
-                }
-                
-                // محاولة التهيئة
-                firebaseApp = firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                
-                // تحديث حالة الاتصال
-                updateFirebaseStatus('connecting');
-                
-                // اختبار الاتصال
-                testFirebaseConnection();
-                
-            } catch (error) {
-                console.error("❌ خطأ في تهيئة Firebase:", error);
-                handleFirebaseError(error);
-            }
-        }
-
-        // اختبار اتصال Firebase
-        async function testFirebaseConnection() {
-            try {
-                // اختبار بسيط للاتصال
-                await db.collection("_test_connection").doc("test").get({
-                    source: 'default'
-                }).then(() => {
-                    console.log("✅ Firebase متصل بنجاح");
-                    appData.isFirebaseConnected = true;
-                    connectionRetries = 0;
-                    updateFirebaseStatus('online');
-                    hideConnectionAlert();
-                    
-                    // بدء المزامنة في الوقت الحقيقي
-                    setupRealtimeSync();
-                    
-                    // إظهار رسالة نجاح
-                    showNotyNotification('✅ تم الاتصال', 'تم الاتصال بـ Firebase بنجاح!', 'success');
-                    
-                }).catch(async (error) => {
-                    // إذا فشل، حاول إنشاء مجموعة اختبار
-                    try {
-                        await db.collection("patients").doc("test_connection").set({
-                            test: true,
-                            timestamp: new Date().toISOString()
-                        });
-                        
-                        console.log("✅ Firebase متصل (تم إنشاء اختبار)");
-                        appData.isFirebaseConnected = true;
-                        connectionRetries = 0;
-                        updateFirebaseStatus('online');
-                        hideConnectionAlert();
-                        
-                        setupRealtimeSync();
-                        showNotyNotification('✅ تم الاتصال', 'تم الاتصال بـ Firebase بنجاح!', 'success');
-                        
-                    } catch (createError) {
-                        throw createError;
-                    }
-                });
-                
-            } catch (error) {
-                console.error("❌ فشل اختبار الاتصال:", error);
-                handleFirebaseError(error);
-            }
-        }
-
-        // معالجة أخطاء Firebase
-        function handleFirebaseError(error) {
-            appData.isFirebaseConnected = false;
-            connectionRetries++;
-            
-            let errorMessage = "خطأ غير معروف";
-            let debugInfo = "";
-            
-            if (error.code) {
-                switch (error.code) {
-                    case 'failed-precondition':
-                        errorMessage = "Firestore غير مفعل في المشروع";
-                        debugInfo = "اذهب إلى Firebase Console > Firestore Database > إنشاء قاعدة بيانات";
-                        break;
-                    case 'permission-denied':
-                        errorMessage = "صلاحية مرفوضة لقواعد الأمان";
-                        debugInfo = "تحقق من قواعد Firestore في Firebase Console";
-                        break;
-                    case 'unavailable':
-                        errorMessage = "Firebase غير متوفر حاليًا";
-                        debugInfo = "تحقق من اتصال الإنترنت";
-                        break;
-                    default:
-                        errorMessage = `خطأ: ${error.code}`;
-                        debugInfo = error.message || "لا توجد تفاصيل إضافية";
-                }
-            }
-            
-            updateFirebaseStatus('error');
-            showConnectionAlert(errorMessage, debugInfo);
-            
-            // إذا لم نتجاوز الحد الأقصى للمحاولات، حاول مرة أخرى
-            if (connectionRetries <= MAX_RETRIES) {
-                setTimeout(() => {
-                    console.log(`🔄 محاولة الاتصال مرة أخرى (${connectionRetries}/${MAX_RETRIES})...`);
-                    testFirebaseConnection();
-                }, 3000);
-            }
-        }
-
-        // تحديث حالة Firebase في الواجهة
-        function updateFirebaseStatus(status) {
-            const statusElement = document.getElementById('firebase-status');
-            const shareStatusElement = document.getElementById('share-status');
-            const dot = statusElement.querySelector('.status-dot');
-            const text = statusElement.querySelector('span');
-            
-            statusElement.className = 'firebase-status ' + status;
-            dot.className = 'status-dot ' + status;
-            
-            switch(status) {
-                case 'online':
-                    text.textContent = 'متصـل بـ Firebase';
-                    shareStatusElement.textContent = 'مفعلة - متزامن';
-                    shareStatusElement.style.color = 'green';
-                    break;
-                case 'offline':
-                    text.textContent = 'غير متصل بـ Firebase';
-                    shareStatusElement.textContent = 'محلي فقط';
-                    shareStatusElement.style.color = 'orange';
-                    break;
-                case 'error':
-                    text.textContent = 'خطأ في الاتصال';
-                    shareStatusElement.textContent = 'خطأ اتصال';
-                    shareStatusElement.style.color = 'red';
-                    break;
-                case 'connecting':
-                    text.textContent = 'جاري الاتصال...';
-                    shareStatusElement.textContent = 'جاري الاتصال';
-                    shareStatusElement.style.color = 'blue';
-                    break;
-            }
-        }
-
-        // إظهار تنبيه مشكلة الاتصال
-        function showConnectionAlert(message, debugInfo) {
-            const alertElement = document.getElementById('connection-alert');
-            const debugElement = document.getElementById('firebase-debug');
-            const infoElement = document.getElementById('debug-info');
-            
-            infoElement.textContent = `${message} - ${debugInfo}`;
-            alertElement.classList.add('show');
-            debugElement.classList.add('show');
-        }
-
-        // إخفاء تنبيه الاتصال
-        function hideConnectionAlert() {
-            const alertElement = document.getElementById('connection-alert');
-            const debugElement = document.getElementById('firebase-debug');
-            
-            alertElement.classList.remove('show');
-            debugElement.classList.remove('show');
-        }
-
-        // إعداد المزامنة في الوقت الحقيقي
-        function setupRealtimeSync() {
-            if (!db || !appData.patientId || !appData.isFirebaseConnected) {
-                console.log("⚠️ لا يمكن إعداد المزامنة - Firebase غير متصل");
-                return;
-            }
-            
-            if (unsubscribeListener) {
-                unsubscribeListener();
-            }
-            
-            try {
-                unsubscribeListener = db.collection("patients").doc(appData.patientId)
-                    .onSnapshot((doc) => {
-                        if (doc.exists) {
-                            const remoteData = doc.data();
-                            console.log("📥 تم استقبال تحديث من Firebase:", remoteData);
-                            
-                            Object.assign(appData, remoteData);
-                            updateUIWithFirebaseData(remoteData);
-                            localStorage.setItem('medicationTrackerData', JSON.stringify(appData));
-                            showSyncNotification("تم تحديث البيانات من الخادم");
-                            
-                            updateReminders();
-                        } else {
-                            // إذا لم تكن هناك بيانات، احفظ البيانات الحالية
-                            console.log("ℹ️ لا توجد بيانات على Firebase، سيتم إنشاء جديدة");
-                            saveToFirebase();
-                        }
-                    }, (error) => {
-                        console.error("❌ خطأ في المزامنة:", error);
-                        if (error.code === 'permission-denied') {
-                            showNotyNotification(
-                                '❌ صلاحية مرفوضة',
-                                'تحقق من قواعد Firestore في Firebase Console',
-                                'error'
-                            );
-                        }
-                    });
-                    
-                console.log("✅ تم إعداد المزامنة في الوقت الحقيقي");
-                
-            } catch (error) {
-                console.error("❌ خطأ في إعداد المزامنة:", error);
-            }
-        }
-
-        // حفظ البيانات إلى Firebase
-        async function saveToFirebase() {
-            if (!db || !appData.isFirebaseConnected) {
-                console.log("⚠️ Firebase غير متصل، حفظ محلي فقط");
-                return false;
-            }
-            
-            try {
-                appData.lastSave = new Date().toISOString();
-                appData.today = new Date().toDateString();
-                
-                await db.collection("patients").doc(appData.patientId).set({
-                    ...appData,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                
-                console.log("✅ تم حفظ البيانات في Firebase");
-                showSaveIndicator();
-                updateLastSaveTime();
-                return true;
-            } catch (error) {
-                console.error("❌ خطأ في حفظ البيانات إلى Firebase:", error);
-                showNotyNotification(
-                    '❌ فشل الحفظ',
-                    'تعذر حفظ البيانات في السحابة',
-                    'error'
-                );
-                return false;
-            }
-        }
-
-        // تحميل البيانات من Firebase
-        async function loadFromFirebase() {
-            if (!db || !appData.isFirebaseConnected) {
-                console.log("⚠️ Firebase غير متصل، تحميل محلي فقط");
-                return null;
-            }
-            
-            try {
-                const doc = await db.collection("patients").doc(appData.patientId).get();
-                
-                if (doc.exists) {
-                    const data = doc.data();
-                    console.log("✅ تم تحميل البيانات من Firebase:", data);
-                    return data;
-                } else {
-                    console.log("ℹ️ لا توجد بيانات على Firebase، سيتم إنشاء جديدة");
-                    return null;
-                }
-            } catch (error) {
-                console.error("❌ خطأ في تحميل البيانات من Firebase:", error);
-                return null;
-            }
-        }
 
         // تهيئة نظام الإشعارات
         function initNotifications() {
+            // تحديث إعدادات الإشعارات
             updateNotificationSettings();
+            
+            // تحديث قائمة التذكيرات اليوم
             updateTodayNotifications();
+            
+            // تحديث مؤشر التذكير القادم
             updateNextReminder();
         }
 
         // بدء نظام التذكيرات
         function startReminderSystem() {
+            // إيقاف أي فاصل زمني سابق
             if (notificationInterval) {
                 clearInterval(notificationInterval);
             }
             
+            // فحص التذكيرات كل دقيقة
             notificationInterval = setInterval(() => {
                 checkReminders();
                 updateUpcomingTimeSlots();
-            }, 60000);
+            }, 60000); // كل دقيقة
             
+            // فحص التذكيرات فوراً
             checkReminders();
             updateUpcomingTimeSlots();
         }
 
         // تحديث إعدادات الإشعارات
         function updateNotificationSettings() {
+            // تحميل الإعدادات المحفوظة
             const savedSettings = localStorage.getItem('notificationSettings');
             if (savedSettings) {
                 appData.notificationSettings = JSON.parse(savedSettings);
             }
             
+            // تحديث واجهة المستخدم
             document.getElementById('enable-notifications').checked = appData.notificationsEnabled;
             document.getElementById('reminder-before').value = appData.notificationSettings.reminderBefore;
             document.getElementById('reminder-repeat').value = appData.notificationSettings.reminderRepeat;
@@ -2009,22 +1717,25 @@
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
             
+            // البحث عن الأدوية القادمة
             medicationTimes.forEach(timeSlot => {
                 const medsInSlot = allMedications.filter(med => med.time === timeSlot.time);
                 const hasUntakenMeds = medsInSlot.some(med => {
-                    const medKey = `${med.name}-${timeSlot.time}`;
+                    const medKey = `${med.name}-${med.time}`;
                     return !appData.medications[medKey];
                 });
                 
                 if (!hasUntakenMeds) return;
                 
+                // حساب وقت التذكير
                 const reminderTime = new Date();
                 reminderTime.setHours(timeSlot.hour);
                 reminderTime.setMinutes(timeSlot.minute - appData.notificationSettings.reminderBefore);
                 reminderTime.setSeconds(0);
                 
+                // إذا كان وقت التذكير قريب (في حدود دقيقة)
                 const timeDiff = Math.abs(reminderTime - now);
-                if (timeDiff < 60000) {
+                if (timeDiff < 60000) { // أقل من دقيقة
                     sendReminderNotification(timeSlot, medsInSlot);
                 }
             });
@@ -2032,6 +1743,7 @@
 
         // إرسال إشعار تذكير
         function sendReminderNotification(timeSlot, medications) {
+            // قائمة الأدوية التي لم تؤخذ
             const untakenMeds = medications.filter(med => {
                 const medKey = `${med.name}-${timeSlot.time}`;
                 return !appData.medications[medKey];
@@ -2039,13 +1751,18 @@
             
             if (untakenMeds.length === 0) return;
             
+            // إنشاء رسالة الإشعار
             const medNames = untakenMeds.map(med => med.name).join(', ');
             const title = `⏰ وقت الأدوية - ${timeSlot.name}`;
             const body = `يجب أخذ: ${medNames}`;
             
+            // إرسال إشعار Noty
             showNotyNotification(title, body, 'warning');
+            
+            // محاولة إرسال إشعار المتصفح
             sendBrowserNotification(title, body);
             
+            // حفظ في السجل
             const historyEntry = {
                 type: 'reminder',
                 time: new Date().toLocaleTimeString('ar-EG'),
@@ -2075,28 +1792,42 @@
                 animation: {
                     open: 'noty_effects_open',
                     close: 'noty_effects_close'
+                },
+                sounds: {
+                    sources: [],
+                    volume: 0,
+                    conditions: []
                 }
             }).show();
         }
 
         // إرسال إشعار المتصفح
         function sendBrowserNotification(title, body) {
-            if (!("Notification" in window)) return;
+            // التحقق من إذن الإشعارات
+            if (!("Notification" in window)) {
+                console.log("هذا المتصفح لا يدعم إشعارات سطح المكتب");
+                return;
+            }
             
             if (Notification.permission === "granted") {
+                // إرسال الإشعار
                 const notification = new Notification(title, {
                     body: body,
-                    icon: '/icon.png',
+                    icon: '/icon.png', // يمكن تغييرها
                     badge: '/badge.png',
                     tag: 'medication-reminder',
-                    renotify: true
+                    renotify: true,
+                    requireInteraction: true,
+                    vibrate: [200, 100, 200]
                 });
                 
+                // حدث النقر على الإشعار
                 notification.onclick = function() {
                     window.focus();
                     notification.close();
                 };
             } else if (Notification.permission !== "denied") {
+                // طلب الإذن
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
                         appData.notificationSettings.permissionGranted = true;
@@ -2106,12 +1837,25 @@
             }
         }
 
+        // التحقق من إذن الإشعارات
+        function checkNotificationPermission() {
+            if ("Notification" in window) {
+                if (Notification.permission === "granted") {
+                    appData.notificationSettings.permissionGranted = true;
+                    document.getElementById('request-permission').style.display = 'none';
+                } else {
+                    document.getElementById('request-permission').style.display = 'block';
+                }
+            }
+        }
+
         // تحديث التذكيرات اليوم
         function updateTodayNotifications() {
             const container = document.getElementById('today-notifications');
             const now = new Date();
             const currentHour = now.getHours();
             
+            // تصفية الأوقات القادمة اليوم
             const upcomingTimes = medicationTimes.filter(time => time.hour > currentHour);
             
             if (upcomingTimes.length === 0) {
@@ -2124,6 +1868,7 @@
                 return;
             }
             
+            // إنشاء قائمة التذكيرات
             let html = '';
             upcomingTimes.forEach(timeSlot => {
                 const medsInSlot = allMedications.filter(med => med.time === timeSlot.time);
@@ -2162,12 +1907,13 @@
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
             
+            // البحث عن أقرب تذكير
             let nextReminder = null;
             let nextReminderTime = null;
             
             medicationTimes.forEach(timeSlot => {
                 if (timeSlot.hour < currentHour || (timeSlot.hour === currentHour && timeSlot.minute <= currentMinute)) {
-                    return;
+                    return; // تخطي الأوقات الماضية
                 }
                 
                 const medsInSlot = allMedications.filter(med => med.time === timeSlot.time);
@@ -2193,6 +1939,7 @@
                 }
             });
             
+            // تحديث الواجهة
             const reminderElement = document.getElementById('next-reminder');
             if (nextReminder) {
                 const timeString = nextReminder.time.toLocaleTimeString('ar-EG', { 
@@ -2209,20 +1956,22 @@
             }
         }
 
-        // تحديث الأوقات القادمة
+        // تحديث الأوقات القادمة (التأثير المرئي)
         function updateUpcomingTimeSlots() {
             const now = new Date();
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
             
+            // إزالة كلاس "upcoming" من جميع الأوقات
             document.querySelectorAll('.time-slot').forEach(slot => {
                 slot.classList.remove('upcoming');
             });
             
+            // البحث عن الأوقات القادمة في الساعة القادمة
             medicationTimes.forEach(timeSlot => {
                 const timeDiff = (timeSlot.hour * 60 + timeSlot.minute) - (currentHour * 60 + currentMinute);
                 
-                if (timeDiff > 0 && timeDiff <= 60) {
+                if (timeDiff > 0 && timeDiff <= 60) { // في الساعة القادمة
                     const slotElement = document.querySelector(`.time-slot[data-time="${timeSlot.time}"]`);
                     if (slotElement) {
                         slotElement.classList.add('upcoming');
@@ -2236,6 +1985,395 @@
             updateTodayNotifications();
             updateNextReminder();
             updateUpcomingTimeSlots();
+        }
+
+        // تهيئة التقويم
+        function initCalendar() {
+            renderCalendar();
+            
+            // حدث زر إظهار/إخفاء التقويم
+            document.getElementById('calendar-toggle').addEventListener('click', function() {
+                toggleCalendar();
+            });
+            
+            // حدث زر إغلاق التقويم
+            document.getElementById('calendar-close').addEventListener('click', function() {
+                hideCalendar();
+            });
+            
+            // أحداث التنقل في التقويم
+            document.getElementById('calendar-prev').addEventListener('click', function() {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+            
+            document.getElementById('calendar-next').addEventListener('click', function() {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
+            });
+            
+            document.getElementById('calendar-today').addEventListener('click', function() {
+                currentCalendarDate = new Date();
+                selectedCalendarDate = new Date();
+                renderCalendar();
+            });
+        }
+
+        // إظهار/إخفاء التقويم
+        function toggleCalendar() {
+            const calendarContainer = document.getElementById('calendar-container');
+            const toggleButton = document.getElementById('calendar-toggle');
+            
+            appData.calendarVisible = !appData.calendarVisible;
+            
+            if (appData.calendarVisible) {
+                calendarContainer.classList.add('show');
+                toggleButton.innerHTML = '<i class="fas fa-calendar-alt"></i> إخفاء التقويم الشهري';
+                toggleButton.classList.add('active');
+            } else {
+                calendarContainer.classList.remove('show');
+                toggleButton.innerHTML = '<i class="fas fa-calendar-alt"></i> إظهار التقويم الشهري';
+                toggleButton.classList.remove('active');
+            }
+        }
+
+        // إخفاء التقويم
+        function hideCalendar() {
+            const calendarContainer = document.getElementById('calendar-container');
+            const toggleButton = document.getElementById('calendar-toggle');
+            
+            appData.calendarVisible = false;
+            calendarContainer.classList.remove('show');
+            toggleButton.innerHTML = '<i class="fas fa-calendar-alt"></i> إظهار التقويم الشهري';
+            toggleButton.classList.remove('active');
+        }
+
+        // عرض التقويم
+        function renderCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const monthYearElement = document.getElementById('calendar-month-year');
+            
+            // تهيئة التقويم
+            calendarGrid.innerHTML = '';
+            
+            // عرض أسماء الأيام
+            const daysOfWeek = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+            daysOfWeek.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day-header';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // تحديد أول وآخر يوم من الشهر
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            
+            // حساب اليوم الذي يبدأ فيه الشهر
+            let startDay = firstDayOfMonth.getDay();
+            startDay = startDay === 0 ? 6 : startDay - 1;
+            
+            // عرض الأيام الفارغة قبل بداية الشهر
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startDay - 1; i >= 0; i--) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day other-month';
+                dayElement.textContent = prevMonthLastDay - i;
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // عرض أيام الشهر الحالي
+            const today = new Date();
+            const isToday = (day) => {
+                return day === today.getDate() && 
+                       month === today.getMonth() && 
+                       year === today.getFullYear();
+            };
+            
+            const isSelected = (day) => {
+                return day === selectedCalendarDate.getDate() && 
+                       month === selectedCalendarDate.getMonth() && 
+                       year === selectedCalendarDate.getFullYear();
+            };
+            
+            for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                if (isToday(day)) {
+                    dayElement.classList.add('today');
+                }
+                
+                if (isSelected(day)) {
+                    dayElement.classList.add('selected');
+                }
+                
+                const dateKey = `${year}-${month + 1}-${day}`;
+                if (hasMedicationsForDate(dateKey)) {
+                    dayElement.classList.add('has-meds');
+                }
+                
+                dayElement.addEventListener('click', function() {
+                    selectedCalendarDate = new Date(year, month, day);
+                    renderCalendar();
+                    showDayDetails(selectedCalendarDate);
+                });
+                
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // عرض الأيام الفارغة بعد نهاية الشهر
+            const totalCells = 42;
+            const daysSoFar = startDay + lastDayOfMonth.getDate();
+            const remainingCells = totalCells - daysSoFar;
+            
+            for (let i = 1; i <= remainingCells; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day other-month';
+                dayElement.textContent = i;
+                calendarGrid.appendChild(dayElement);
+            }
+            
+            // تحديث عنوان الشهر والسنة
+            const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+                              'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            monthYearElement.textContent = `${monthNames[month]} ${year}`;
+        }
+
+        // التحقق إذا كان للتاريخ بيانات أدوية
+        function hasMedicationsForDate(dateKey) {
+            const day = parseInt(dateKey.split('-')[2]);
+            return day % 3 === 0 || day % 5 === 0;
+        }
+
+        // عرض تفاصيل يوم محدد
+        function showDayDetails(date) {
+            const formattedDate = date.toLocaleDateString('ar-EG', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            showNotyNotification(
+                `تفاصيل يوم: ${formattedDate}`,
+                'سيتم تطوير هذه النافذة لعرض:\n- الأدوية المأخوذة في هذا اليوم\n- نسبة الإنجاز\n- الملاحظات',
+                'info'
+            );
+        }
+
+        // تهيئة Firebase
+        function initializeFirebase() {
+            try {
+                firebaseApp = firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                
+                // محاولة تهيئة الرسائل (قد لا تعمل على كل المتصفحات)
+                try {
+                    messaging = firebase.messaging();
+                    initFirebaseMessaging();
+                } catch (error) {
+                    console.log("Firebase Messaging غير مدعوم في هذا المتصفح");
+                }
+                
+                // اختبار الاتصال
+                db.collection("test").doc("test").get()
+                    .then(() => {
+                        appData.isFirebaseConnected = true;
+                        updateFirebaseStatus(true);
+                        console.log("✅ Firebase متصل بنجاح");
+                        
+                        setupRealtimeSync();
+                    })
+                    .catch((error) => {
+                        console.error("❌ خطأ في اتصال Firebase:", error);
+                        updateFirebaseStatus(false);
+                    });
+            } catch (error) {
+                console.error("❌ خطأ في تهيئة Firebase:", error);
+                updateFirebaseStatus(false);
+            }
+        }
+
+        // تهيئة Firebase Messaging للإشعارات السحابية
+        function initFirebaseMessaging() {
+            // طلب الإذن للإشعارات
+            messaging.requestPermission()
+                .then(() => {
+                    console.log("✅ تم منح إذن الإشعارات");
+                    return messaging.getToken();
+                })
+                .then((token) => {
+                    console.log("🔑 Token:", token);
+                    // يمكن حفظ التوكن لإرسال إشعارات سحابية
+                })
+                .catch((error) => {
+                    console.log("❌ لم يتم منح إذن الإشعارات:", error);
+                });
+            
+            // استقبال الإشعارات عند فتح التطبيق
+            messaging.onMessage((payload) => {
+                console.log("📩 تم استقبال إشعار:", payload);
+                showNotyNotification(
+                    payload.notification.title,
+                    payload.notification.body,
+                    'info'
+                );
+            });
+        }
+
+        // تحديث حالة Firebase في الواجهة
+        function updateFirebaseStatus(isConnected) {
+            const statusElement = document.getElementById('firebase-status');
+            const shareStatusElement = document.getElementById('share-status');
+            
+            if (isConnected) {
+                statusElement.className = 'firebase-status online';
+                statusElement.querySelector('.status-dot').className = 'status-dot online';
+                statusElement.querySelector('span').textContent = 'متصـل بـ Firebase';
+                shareStatusElement.textContent = 'مفعلة - متزامن';
+                shareStatusElement.style.color = 'green';
+            } else {
+                statusElement.className = 'firebase-status offline';
+                statusElement.querySelector('.status-dot').className = 'status-dot offline';
+                statusElement.querySelector('span').textContent = 'غير متصل بـ Firebase';
+                shareStatusElement.textContent = 'محلي فقط';
+                shareStatusElement.style.color = 'orange';
+            }
+        }
+
+        // إعداد المزامنة في الوقت الحقيقي
+        function setupRealtimeSync() {
+            if (!db || !appData.patientId) return;
+            
+            if (unsubscribeListener) {
+                unsubscribeListener();
+            }
+            
+            unsubscribeListener = db.collection("patients").doc(appData.patientId)
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const remoteData = doc.data();
+                        console.log("📥 تم استقبال تحديث من Firebase:", remoteData);
+                        
+                        Object.assign(appData, remoteData);
+                        updateUIWithFirebaseData(remoteData);
+                        localStorage.setItem('medicationTrackerData', JSON.stringify(appData));
+                        showSyncNotification("تم تحديث البيانات من الخادم");
+                        
+                        // تحديث التذكيرات بعد المزامنة
+                        updateReminders();
+                    }
+                }, (error) => {
+                    console.error("❌ خطأ في المزامنة:", error);
+                });
+        }
+
+        // حفظ البيانات إلى Firebase
+        async function saveToFirebase() {
+            if (!db || !appData.isFirebaseConnected) {
+                console.log("⚠️ Firebase غير متصل، حفظ محلي فقط");
+                return false;
+            }
+            
+            try {
+                appData.lastSave = new Date().toISOString();
+                appData.today = new Date().toDateString();
+                
+                await db.collection("patients").doc(appData.patientId).set({
+                    ...appData,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                console.log("✅ تم حفظ البيانات في Firebase");
+                showSaveIndicator();
+                updateLastSaveTime();
+                return true;
+            } catch (error) {
+                console.error("❌ خطأ في حفظ البيانات إلى Firebase:", error);
+                return false;
+            }
+        }
+
+        // تحميل البيانات من Firebase
+        async function loadFromFirebase() {
+            if (!db || !appData.isFirebaseConnected) {
+                console.log("⚠️ Firebase غير متصل، تحميل محلي فقط");
+                return null;
+            }
+            
+            try {
+                const doc = await db.collection("patients").doc(appData.patientId).get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    console.log("✅ تم تحميل البيانات من Firebase:", data);
+                    return data;
+                } else {
+                    console.log("ℹ️ لا توجد بيانات على Firebase، سيتم إنشاء جديدة");
+                    return null;
+                }
+            } catch (error) {
+                console.error("❌ خطأ في تحميل البيانات من Firebase:", error);
+                return null;
+            }
+        }
+
+        // تحديث واجهة المستخدم مع بيانات Firebase
+        function updateUIWithFirebaseData(data) {
+            if (!data) return;
+            
+            if (data.patientName && data.patientName !== appData.patientName) {
+                document.getElementById('patient-name-input').value = data.patientName;
+                document.getElementById('patient-name').textContent = data.patientName;
+                appData.patientName = data.patientName;
+            }
+            
+            if (data.caregiverName && data.caregiverName !== appData.caregiverName) {
+                document.getElementById('caregiver-name').value = data.caregiverName;
+                appData.caregiverName = data.caregiverName;
+            }
+            
+            // تحديث إعدادات الإشعارات
+            if (data.notificationSettings) {
+                appData.notificationSettings = data.notificationSettings;
+                updateNotificationSettings();
+            }
+            
+            if (data.medications) {
+                Object.keys(data.medications).forEach(medKey => {
+                    if (JSON.stringify(appData.medications[medKey]) !== JSON.stringify(data.medications[medKey])) {
+                        appData.medications[medKey] = data.medications[medKey];
+                    }
+                });
+                
+                allMedications.forEach(med => {
+                    const checkbox = document.getElementById(med.id);
+                    if (checkbox) {
+                        const medKey = `${med.name}-${med.time}`;
+                        const shouldBeChecked = data.medications[medKey] ? true : false;
+                        
+                        if (checkbox.checked !== shouldBeChecked) {
+                            checkbox.checked = shouldBeChecked;
+                            updateMedicationUI(checkbox, false);
+                        }
+                    }
+                });
+                
+                updateProgress();
+            }
+            
+            if (data.history && JSON.stringify(data.history) !== JSON.stringify(appData.history)) {
+                appData.history = data.history;
+                updateHistoryList();
+            }
+            
+            // تحديث التذكيرات
+            updateReminders();
         }
 
         // تحميل البيانات المحفوظة
@@ -2269,6 +2407,8 @@
                                     }
                                 }
                             });
+                            
+                            console.log('✅ تم تحميل البيانات المحفوظة بنجاح');
                         }
                     } catch (error) {
                         console.error('❌ خطأ في تحميل البيانات المحفوظة:', error);
@@ -2281,6 +2421,7 @@
                 document.getElementById('share-link-container').classList.add('active');
             }
             
+            // تهيئة نظام الإشعارات
             initNotifications();
         }
 
@@ -2298,20 +2439,178 @@
             }
         }
 
-        // بقية الدوال تبقى كما هي مع تعديلات طفيفة
-        // ... (الدوال الأخرى تبقى كما هي مع إزالة Covapraviv من القوائم)
-        
+        // حفظ البيانات يدويًا
+        async function manualSaveData() {
+            await autoSaveData();
+            showNotyNotification('تم الحفظ', 'تم حفظ البيانات بنجاح!', 'success');
+        }
+
+        // إظهار مؤشر الحفظ
+        function showSaveIndicator() {
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.remove('show');
+            void indicator.offsetWidth;
+            indicator.classList.add('show');
+        }
+
+        // إظهار إشعار المزامنة
+        function showSyncNotification(message) {
+            const indicator = document.getElementById('save-indicator');
+            indicator.innerHTML = `<i class="fas fa-sync-alt"></i> ${message}`;
+            indicator.classList.remove('show');
+            void indicator.offsetWidth;
+            indicator.classList.add('show');
+        }
+
+        // تحديث وقت الحفظ الأخير
+        function updateLastSaveTime() {
+            const lastSaveElement = document.getElementById('last-save-time');
+            if (appData.lastSave) {
+                const saveDate = new Date(appData.lastSave);
+                const timeString = saveDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                const source = appData.isFirebaseConnected ? " (مزامنة سحابية)" : " (محلي)";
+                lastSaveElement.textContent = `آخر تحديث: ${timeString}${source}`;
+            } else {
+                lastSaveElement.textContent = '';
+            }
+        }
+
+        // تحديث تاريخ اليوم
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('ar-EG', options);
+        }
+
+        // إضافة أحداث لمربعات الاختيار
+        function initCheckboxes() {
+            allMedications.forEach(med => {
+                const checkbox = document.getElementById(med.id);
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        updateMedicationUI(this, true);
+                        updateProgress();
+                        updateHistory(this);
+                        updateReminders(); // تحديث التذكيرات بعد تغيير حالة الدواء
+                    });
+                    
+                    const checkmark = checkbox.nextElementSibling;
+                    if (checkmark) {
+                        checkmark.addEventListener('click', function() {
+                            checkbox.checked = !checkbox.checked;
+                            checkbox.dispatchEvent(new Event('change'));
+                        });
+                    }
+                }
+            });
+        }
+
+        // تحديث واجهة الدواء
+        function updateMedicationUI(checkbox, saveData = true) {
+            const medicationItem = checkbox.closest('.medication-item');
+            const medName = checkbox.getAttribute('data-med');
+            const time = checkbox.getAttribute('data-time');
+            const medKey = `${medName}-${time}`;
+            
+            if (checkbox.checked) {
+                medicationItem.classList.add('status-taken');
+                medicationItem.classList.remove('status-missed');
+                medicationItem.classList.add('checked');
+                appData.medications[medKey] = {
+                    taken: true,
+                    timestamp: new Date().toISOString()
+                };
+            } else {
+                medicationItem.classList.add('status-missed');
+                medicationItem.classList.remove('status-taken');
+                medicationItem.classList.remove('checked');
+                delete appData.medications[medKey];
+            }
+            
+            if (saveData) {
+                autoSaveData();
+            }
+        }
+
+        // تحديث التقدم
+        function updateProgress() {
+            const totalMeds = allMedications.length;
+            const takenMeds = Object.keys(appData.medications).length;
+            const remainingMeds = totalMeds - takenMeds;
+            const progressPercent = (takenMeds / totalMeds) * 100;
+            
+            document.getElementById('taken-count').textContent = takenMeds;
+            document.getElementById('remaining-count').textContent = remainingMeds;
+            document.getElementById('taken-count-display').textContent = takenMeds;
+            document.getElementById('remaining-count-display').textContent = remainingMeds;
+            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+        }
+
+        // تحديث السجل
+        function updateHistory(checkbox) {
+            const medName = checkbox.getAttribute('data-med');
+            const isChecked = checkbox.checked;
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            
+            const historyEntry = {
+                medication: medName,
+                status: isChecked ? 'taken' : 'missed',
+                time: timeString,
+                timestamp: now.toISOString(),
+                by: appData.patientName || 'مستخدم'
+            };
+            
+            appData.history.unshift(historyEntry);
+            
+            if (appData.history.length > 20) {
+                appData.history = appData.history.slice(0, 20);
+            }
+            
+            updateHistoryList();
+        }
+
+        // تحديث قائمة السجل
+        function updateHistoryList() {
+            const historyList = document.getElementById('history-list');
+            const emptyHistory = document.getElementById('empty-history');
+            
+            if (appData.history.length === 0) {
+                emptyHistory.style.display = 'block';
+                return;
+            }
+            
+            emptyHistory.style.display = 'none';
+            const recentHistory = appData.history.slice(0, 10);
+            
+            historyList.innerHTML = '';
+            
+            recentHistory.forEach(entry => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const statusClass = entry.status === 'taken' ? 'status-taken-badge' : 'status-missed-badge';
+                const statusText = entry.status === 'taken' ? 'تم أخذه' : 'ملغي';
+                
+                historyItem.innerHTML = `
+                    <div class="history-time">${entry.time}</div>
+                    <div class="history-med">${entry.medication}</div>
+                    <div class="history-status ${statusClass}">${statusText}</div>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+
         // إضافة أحداث للأزرار
         function initButtons() {
             document.getElementById('reset-day').addEventListener('click', resetDay);
             document.getElementById('save-data').addEventListener('click', manualSaveData);
-            document.getElementById('clear-firebase').addEventListener('click', clearFirebaseData);
             document.getElementById('generate-share').addEventListener('click', generateShareLink);
             document.getElementById('copy-link').addEventListener('click', copyShareLink);
             document.getElementById('clear-history').addEventListener('click', clearHistory);
             document.getElementById('sync-now').addEventListener('click', syncNow);
             document.getElementById('export-data').addEventListener('click', exportData);
-            document.getElementById('retry-connection').addEventListener('click', retryConnection);
             
             // أحداث الإشعارات
             document.getElementById('request-permission').addEventListener('click', requestNotificationPermission);
@@ -2365,7 +2664,7 @@
                         setupRealtimeSync();
                         showNotyNotification(
                             'تم تغيير المعرف',
-                            `تم تغيير معرف المريض إلى: ${newPatientId}`,
+                            `تم تغيير معرف المريض إلى: ${newPatientId}<br>تأكد أن والدك يستخدم نفس المعرف!`,
                             'info'
                         );
                     }
@@ -2373,31 +2672,175 @@
             });
         }
 
-        // إعادة محاولة الاتصال
-        function retryConnection() {
-            connectionRetries = 0;
-            initializeFirebase();
-        }
-
-        // مسح بيانات Firebase
-        async function clearFirebaseData() {
-            if (!appData.isFirebaseConnected) {
-                showNotyNotification('غير متصل', 'Firebase غير متصل', 'error');
+        // طلب إذن الإشعارات
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                showNotyNotification('غير مدعوم', 'هذا المتصفح لا يدعم إشعارات سطح المكتب', 'error');
                 return;
             }
             
-            if (confirm('هل تريد مسح جميع البيانات من Firebase؟ هذا الإجراء لا يمكن التراجع عنه.')) {
-                try {
-                    await db.collection("patients").doc(appData.patientId).delete();
-                    showNotyNotification('تم المسح', 'تم مسح البيانات من Firebase', 'success');
-                } catch (error) {
-                    showNotyNotification('فشل المسح', 'تعذر مسح البيانات', 'error');
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    appData.notificationSettings.permissionGranted = true;
+                    document.getElementById('request-permission').style.display = 'none';
+                    autoSaveData();
+                    showNotyNotification('تم التفويض', 'تم منح إذن الإشعارات بنجاح!', 'success');
+                } else {
+                    showNotyNotification('تم الرفض', 'لم يتم منح إذن الإشعارات', 'warning');
                 }
+            });
+        }
+
+        // اختبار الإشعار
+        function testNotification() {
+            showNotyNotification(
+                '🔔 اختبار الإشعارات',
+                'هذا إشعار اختبار لنظام تذكير الأدوية. ستصلك إشعارات مشابهة عند موعد أدويتك.',
+                'info'
+            );
+            
+            // محاولة إرسال إشعار المتصفح
+            sendBrowserNotification(
+                '🔔 اختبار الإشعارات',
+                'هذا إشعار اختبار لنظام تذكير الأدوية'
+            );
+            
+            // تشغيل صوت اختبار (إذا كان متاحاً)
+            if (appData.notificationSettings.reminderSound !== 'none') {
+                playNotificationSound();
             }
         }
 
-        // بقية الدوال تبقى كما هي
-        // ... (الدوال الأخرى)
+        // تشغيل صوت الإشعار
+        function playNotificationSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 1);
+            } catch (error) {
+                console.log("❌ لا يمكن تشغيل الصوت:", error);
+            }
+        }
+
+        // بدء يوم جديد
+        async function resetDay() {
+            if (confirm('هل تريد بدء يوم جديد؟ سيتم إعادة تعيين جميع الأدوية.')) {
+                allMedications.forEach(med => {
+                    const checkbox = document.getElementById(med.id);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        updateMedicationUI(checkbox, false);
+                    }
+                });
+                
+                appData.medications = {};
+                appData.today = new Date().toDateString();
+                appData.history = [];
+                
+                updateProgress();
+                updateHistoryList();
+                await autoSaveData();
+                
+                showNotyNotification('يوم جديد', 'تم بدء يوم جديد بنجاح!', 'success');
+                updateReminders();
+            }
+        }
+
+        // إنشاء رابط المشاركة
+        function generateShareLink() {
+            const patientName = encodeURIComponent(appData.patientName);
+            const patientId = encodeURIComponent(appData.patientId);
+            const shareUrl = `${window.location.origin}${window.location.pathname}?patient=${patientId}&name=${patientName}`;
+            
+            appData.shareLink = shareUrl;
+            document.getElementById('share-link').value = shareUrl;
+            document.getElementById('share-link-container').classList.add('active');
+            
+            autoSaveData();
+            
+            showNotyNotification(
+                'تم إنشاء الرابط',
+                `معرف المريض: ${appData.patientId}<br>شارك هذا المعرف مع والدك`,
+                'success'
+            );
+        }
+
+        // نسخ رابط المشاركة
+        function copyShareLink() {
+            const shareLinkInput = document.getElementById('share-link');
+            shareLinkInput.select();
+            shareLinkInput.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(shareLinkInput.value)
+                .then(() => {
+                    showNotyNotification('تم النسخ', 'تم نسخ الرابط بنجاح!', 'success');
+                })
+                .catch(err => {
+                    console.error('❌ فشل نسخ الرابط:', err);
+                    shareLinkInput.select();
+                    document.execCommand('copy');
+                    showNotyNotification('تم النسخ', 'تم نسخ الرابط!', 'success');
+                });
+        }
+
+        // مزامنة الآن
+        async function syncNow() {
+            if (!appData.isFirebaseConnected) {
+                showNotyNotification('غير متصل', 'غير متصل بـ Firebase. تحقق من اتصال الإنترنت.', 'error');
+                return;
+            }
+            
+            try {
+                await autoSaveData();
+                showSyncNotification("جاري المزامنة...");
+                
+                const firebaseData = await loadFromFirebase();
+                if (firebaseData) {
+                    updateUIWithFirebaseData(firebaseData);
+                    showSyncNotification("تمت المزامنة بنجاح!");
+                }
+            } catch (error) {
+                console.error('❌ خطأ في المزامنة:', error);
+                showNotyNotification('فشلت المزامنة', 'تحقق من اتصال الإنترنت.', 'error');
+            }
+        }
+
+        // مسح السجل
+        async function clearHistory() {
+            if (confirm('هل أنت متأكد من مسح سجل المتابعة؟')) {
+                appData.history = [];
+                updateHistoryList();
+                await autoSaveData();
+                showNotyNotification('تم المسح', 'تم مسح السجل بنجاح.', 'success');
+            }
+        }
+
+        // تصدير البيانات
+        function exportData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `medtracker_${appData.patientId}_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotyNotification('تم التصدير', 'تم تصدير البيانات بنجاح.', 'success');
+        }
 
         // التحقق من وجود معرف المريض في الرابط
         function checkUrlForPatientId() {
@@ -2423,10 +2866,10 @@
             }
         }
 
-        // تشغيل التحقق من الرابط
+        // تشغيل التحقق من الرابط بعد تهيئة Firebase
         setTimeout(() => {
             checkUrlForPatientId();
-        }, 2000);
+        }, 1000);
     </script>
 </body>
 </html>
