@@ -1,0 +1,11 @@
+{
+  "name": "نظام متابعة الأدوية والتقويم الصحي",
+  "short_name": "متابعة الأدوية",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#3498db",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": []
+}
