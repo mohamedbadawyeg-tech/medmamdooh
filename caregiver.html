@@ -97,6 +97,16 @@
       firebaseConfigJson: '',
       caregiverToken: ''
     };
+    (function applyQueryToken() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const t = params.get('token');
+        if (t) {
+          careData.patientToken = t;
+          localStorage.setItem('caregiverPanel', JSON.stringify(careData));
+        }
+      } catch (e) {}
+    })();
     const inboxEl = document.getElementById('inbox');
     const statusEl = document.getElementById('status-line');
     document.getElementById('patient-name-care').value = careData.patientName || '';
