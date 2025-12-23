@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشروع متابعة الأدوية - نظام إدارة الأدوية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* الأساسيات */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        /* الترويسة */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* قسم اللوحات */
+        .dashboard-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        /* حاوية اللوحات */
+        .dashboards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        /* بطاقات اللوحات */
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .dashboard-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .dashboard-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .card-header i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .card-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .card-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .card-content {
+            padding: 30px;
+        }
+        
+        .features-list {
+            list-style-type: none;
+            margin-bottom: 30px;
+        }
+        
+        .features-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features-list li:before {
+            content: '✓';
+            color: #2ecc71;
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .btn-access {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-access:hover {
+            background: linear-gradient(to right, #27ae60, #219653);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-access i {
+            margin-left: 10px;
+        }
+        
+        /* قسم المعلومات */
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 40px auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-out 0.8s both;
+        }
+        
+        .info-section h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-right: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+        
+        .info-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-item h4 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-item h4 i {
+            margin-left: 10px;
+            color: #3498db;
+        }
+        
+        /* التذييل */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        /* الأنيميشن */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* التجاوب لجميع الأجهزة */
+        @media (max-width: 1100px) {
+            .dashboards-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-card {
+                max-width: 90%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .card-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .card-header i {
+                font-size: 2.5rem;
+            }
+            
+            .info-section {
+                padding: 25px 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .dashboard-card {
+                max-width: 100%;
+            }
+            
+            .card-content {
+                padding: 20px;
+            }
+            
+            .features-list li {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الترويسة -->
+    <header class="header">
+        <h1><i class="fas fa-pills"></i> مشروع متابعة الأدوية</h1>
+        <p>نظام متكامل لإدارة وتتبع الأدوية للمرضى ومقدمي الرعاية الصحية</p>
+    </header>
+    
+    <!-- قسم اللوحات -->
+    <section class="dashboard-section">
+        <h2 class="section-title">لوحات النظام</h2>
+        
+        <div class="dashboards-container">
+            <!-- لوحة مقدم الرعاية -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-user-md"></i>
+                    <h2>لوحة مقدم الرعاية</h2>
+                    <p>إدارة مرضى متعددة، تحديد الجرعات، وتتبع الالتزام بالعلاج</p>
+                </div>
+                <div class="card-content">
+                    <ul class="features-list">
+                        <li>إضافة وإدارة المرضى</li>
+                        <li>تحديد برامج الأدوية والجرعات</li>
+                        <li>مراقبة التزام المريض بالعلاج</li>
+                        <li>توليد تقارير متابعة</li>
+                        <li>إشعارات وتنبيهات للأدوية</li>
+                    </ul>
+                    <a href="caregiver.html" class="btn-access">
+                        <i class="fas fa-sign-in-alt"></i> الدخول إلى لوحة مقدم الرعاية
+                    </a>
+                </div>
+            </div>
+            
+            <!-- لوحة المريض -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-user-injured"></i>
+                    <h2>لوحة المريض</h2>
+                    <p>متابعة الأدوية الشخصية، التنبيهات، والتواصل مع مقدم الرعاية</p>
+                </div>
+                <div class="card-content">
+                    <ul class="features-list">
+                        <li>عرض جدول الأدوية اليومي</li>
+                        <li>تسجيل تناول الجرعات</li>
+                        <li>تذكير وتنبيهات بالأدوية</li>
+                        <li>التواصل مع مقدم الرعاية</li>
+                        <li>تتبع سجل الأدوية</li>
+                    </ul>
+                    <a href="patient.html" class="btn-access">
+                        <i class="fas fa-sign-in-alt"></i> الدخول إلى لوحة المريض
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- قسم المعلومات -->
+    <section class="info-section">
+        <h3>مميزات نظام متابعة الأدوية</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <h4><i class="fas fa-bell"></i> نظام تذكير ذكي</h4>
+                <p>يقدم النظام تذكيرات ذكية بالأدوية عبر التنبيهات المنبثقة والإشعارات لتجنب نسيان الجرعات.</p>
+            </div>
+            
+            <div class="info-item">
+                <h4><i class="fas fa-chart-line"></i> تقارير متابعة</h4>
+                <p>إمكانية توليد تقارير مفصلة عن التزام المريض بالعلاج وتقدم حالته الصحية.</p>
+            </div>
+            
+            <div class="info-item">
+                <h4><i class="fas fa-comments"></i> تواصل مباشر</h4>
+                <p>قناة اتصال مباشرة بين المريض ومقدم الرعاية لتحسين جودة المتابعة والرعاية.</p>
+            </div>
+            
+            <div class="info-item">
+                <h4><i class="fas fa-mobile-alt"></i> متجاوب مع جميع الأجهزة</h4>
+                <p>واجهة مستخدم متكاملة تعمل بكفاءة على الهواتف الذكية، الأجهزة اللوحية، والحواسيب.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- التذييل -->
+    <footer class="footer">
+        <p>نظام متابعة الأدوية &copy; 2023 | تم التطوير لتحسين جودة الرعاية الصحية والالتزام بالعلاج</p>
+    </footer>
+</body>
+</html>
