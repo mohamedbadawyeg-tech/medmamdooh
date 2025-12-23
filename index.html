@@ -1,430 +1,2021 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشروع متابعة الأدوية - نظام إدارة الأدوية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* الأساسيات */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        /* الترويسة */
-        .header {
-            text-align: center;
-            padding: 30px 20px;
-            background: linear-gradient(to right, #2c3e50, #4a6491);
-            color: white;
-            border-radius: 15px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            animation: fadeInDown 1s ease-out;
-        }
-        
-        .header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .header p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            opacity: 0.9;
-        }
-        
-        /* قسم اللوحات */
-        .dashboard-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 40px;
-            color: #2c3e50;
-            position: relative;
-            padding-bottom: 15px;
-        }
-        
-        .section-title:after {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(to right, #3498db, #2c3e50);
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 2px;
-        }
-        
-        /* حاوية اللوحات */
-        .dashboards-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 50px;
-        }
-        
-        /* بطاقات اللوحات */
-        .dashboard-card {
-            background: white;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s ease;
-            animation: fadeInUp 0.8s ease-out;
-            animation-fill-mode: both;
-        }
-        
-        .dashboard-card:nth-child(1) {
-            animation-delay: 0.2s;
-        }
-        
-        .dashboard-card:nth-child(2) {
-            animation-delay: 0.4s;
-        }
-        
-        .dashboard-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-header {
-            background: linear-gradient(to right, #3498db, #2c3e50);
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-        
-        .card-header i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        
-        .card-header h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .card-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .card-content {
-            padding: 30px;
-        }
-        
-        .features-list {
-            list-style-type: none;
-            margin-bottom: 30px;
-        }
-        
-        .features-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .features-list li:before {
-            content: '✓';
-            color: #2ecc71;
-            font-weight: bold;
-            margin-left: 10px;
-            font-size: 1.3rem;
-        }
-        
-        .btn-access {
-            display: block;
-            width: 100%;
-            background: linear-gradient(to right, #2ecc71, #27ae60);
-            color: white;
-            text-align: center;
-            padding: 18px;
-            font-size: 1.3rem;
-            font-weight: 600;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn-access:hover {
-            background: linear-gradient(to right, #27ae60, #219653);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
-        }
-        
-        .btn-access i {
-            margin-left: 10px;
-        }
-        
-        /* قسم المعلومات */
-        .info-section {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 1200px;
-            margin: 40px auto;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 1s ease-out 0.8s both;
-        }
-        
-        .info-section h3 {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-        
-        .info-item {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            border-right: 5px solid #3498db;
-            transition: all 0.3s ease;
-        }
-        
-        .info-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-        }
-        
-        .info-item h4 {
-            color: #2c3e50;
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .info-item h4 i {
-            margin-left: 10px;
-            color: #3498db;
-        }
-        
-        /* التذييل */
-        .footer {
-            text-align: center;
-            padding: 25px;
-            margin-top: 40px;
-            color: #7f8c8d;
-            font-size: 1.1rem;
-            border-top: 1px solid #eee;
-        }
-        
-        /* الأنيميشن */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        /* التجاوب لجميع الأجهزة */
-        @media (max-width: 1100px) {
-            .dashboards-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .dashboard-card {
-                max-width: 90%;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .header p {
-                font-size: 1rem;
-            }
-            
-            .card-header h2 {
-                font-size: 1.8rem;
-            }
-            
-            .card-header i {
-                font-size: 2.5rem;
-            }
-            
-            .info-section {
-                padding: 25px 20px;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header {
-                padding: 20px 15px;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .dashboard-card {
-                max-width: 100%;
-            }
-            
-            .card-content {
-                padding: 20px;
-            }
-            
-            .features-list li {
-                font-size: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام متابعة الأدوية والتقويم الصحي</title>
+  <meta name="theme-color" content="#3498db">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-compat.js"></script>
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #2ecc71;
+      --warning: #e74c3c;
+      --danger: #c0392b;
+      --light: #f8f9fa;
+      --dark: #2c3e50;
+      --gray: #95a5a6;
+      --purple: #9b59b6;
+      --orange: #e67e22;
+      --notification: #ff9800;
+      --caregiver: #9b59b6;
+      --health: #1abc9c;
+      --pain: #e74c3c;
+      --sleep: #3498db;
+      --appetite: #f39c12;
+      --ai: #9b59b6;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    header {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      border-bottom: 5px solid var(--primary);
+    }
+    h1 {
+      color: var(--dark);
+      margin-bottom: 10px;
+      font-size: 2.2rem;
+    }
+    h2 {
+      color: var(--primary);
+      margin: 25px 0 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #eee;
+    }
+    h3 {
+      color: var(--dark);
+      margin: 20px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h4 {
+      color: var(--dark);
+      margin: 15px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .info-card {
+      background: var(--light);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    @media (max-width: 1200px) {
+      .dashboard {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+    .medication-section {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      grid-column: span 2;
+    }
+    .calendar-section {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .sidebar {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .time-slot {
+      margin-bottom: 30px;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 10px;
+      border-right: 5px solid var(--primary);
+      position: relative;
+      animation: slideInRight 0.5s ease forwards;
+      opacity: 0;
+    }
+    @keyframes slideInRight {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideOutRight {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(20px); }
+    }
+    .time-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--dark);
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #ddd;
+    }
+    .time-title i {
+      color: var(--primary);
+    }
+    .medication-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      margin: 10px 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      border: 1px solid #eee;
+      animation: popIn 0.3s ease forwards;
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    @keyframes popIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .medication-item:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .medication-info {
+      flex-grow: 1;
+    }
+    .med-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--dark);
+    }
+    .med-dosage {
+      color: var(--primary);
+      font-size: 0.95rem;
+      margin-top: 5px;
+    }
+    .med-notes {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 5px;
+      font-style: italic;
+    }
+    .checkbox-container {
+      position: relative;
+      margin-right: 10px;
+      min-width: 60px;
+    }
+    .checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    .checkmark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      width: 40px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      font-size: 20px;
+      color: transparent;
+      transition: all 0.3s ease;
+      border: 2px solid #ddd;
+      cursor: pointer;
+    }
+    .checkbox-container input:checked ~ .checkmark {
+      background-color: var(--secondary);
+      color: white;
+      border-color: var(--secondary);
+      transform: scale(1.1);
+    }
+    .checkbox-container input:checked ~ .checkmark:after {
+      content: "✓";
+    }
+    .status-taken {
+      background-color: rgba(46, 204, 113, 0.1) !important;
+      border-color: rgba(46, 204, 113, 0.3) !important;
+    }
+    .status-missed {
+      background-color: rgba(231, 76, 60, 0.1) !important;
+      border-color: rgba(231, 76, 60, 0.3) !important;
+    }
+    .critical-med {
+      background-color: rgba(231, 76, 60, 0.05) !important;
+      border-right: 3px solid var(--danger) !important;
+    }
+    .warning-box {
+      background: #fff3e0;
+      border-right: 4px solid #ff9800;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    .danger-box {
+      background: #ffebee;
+      border-right: 4px solid #f44336;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    .calendar-box {
+      background: #e8f8f5;
+      border-right: 4px solid var(--health);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--dark);
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border 0.3s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      text-align: center;
+      margin: 5px;
+      transform: translateY(0);
+      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    .btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    }
+    .btn-success { background: var(--secondary); }
+    .btn-success:hover { background: #27ae60; }
+    .btn-warning { background: var(--warning); }
+    .btn-warning:hover { background: #c0392b; }
+    .btn-health { background: var(--health); }
+    .btn-health:hover { background: #16a085; }
+    .btn-ai {
+      background: linear-gradient(135deg, var(--ai), #8e44ad);
+      color: white;
+    }
+    .btn-ai:hover {
+      background: linear-gradient(135deg, #8e44ad, var(--ai));
+    }
+    .progress-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .progress-bar {
+      height: 20px;
+      background: #f1f1f1;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0 20px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), #27ae60);
+      width: 0%;
+      transition: width 0.5s ease;
+      border-radius: 10px;
+    }
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+    }
+    .history-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid #f1f1f1;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    .history-item:hover {
+      background-color: #f9f9f9;
+      transform: translateX(-5px);
+    }
+    .history-time {
+      color: var(--gray);
+      font-size: 0.9rem;
+      min-width: 70px;
+    }
+    .history-med {
+      font-weight: bold;
+      flex-grow: 1;
+      margin: 0 10px;
+    }
+    .history-status {
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      min-width: 70px;
+      text-align: center;
+    }
+    .status-taken-badge {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--secondary);
+    }
+    .status-missed-badge {
+      background: rgba(231, 76, 60, 0.2);
+      color: var(--warning);
+    }
+    .alert {
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+    }
+    .alert-warning {
+      background: rgba(231, 76, 60, 0.1);
+      color: #c0392b;
+      border-right: 4px solid var(--warning);
+    }
+    .alert-success {
+      background: rgba(46, 204, 113, 0.1);
+      color: #27ae60;
+      border-right: 4px solid var(--secondary);
+    }
+    .alert-ai {
+      background: rgba(155, 89, 182, 0.1);
+      color: #8e44ad;
+      border-right: 4px solid var(--ai);
+    }
+    .instructions {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      color: var(--gray);
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+    }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .empty-history {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray);
+    }
+    .empty-history i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+    .critical-info {
+      background: rgba(231, 76, 60, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border-right: 4px solid var(--danger);
+    }
+    .checkmark:hover { background-color: #e0e0e0; }
+    .checkbox-container input:focus ~ .checkmark { box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3); }
+    .medication-item.checked { background-color: rgba(46, 204, 113, 0.05); }
+    .notification-time { color: var(--notification); font-weight: bold; font-size: 0.9rem; }
+    .next-reminder {
+      background: linear-gradient(135deg, var(--notification), #ff9800);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+    }
+    .send-notification-btn {
+      background: #ff9800;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+    .send-notification-btn:hover { background: #f57c00; transform: translateY(-2px); }
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    .star-rating input { display: none; }
+    .star-rating label {
+      font-size: 2rem;
+      color: #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 2px;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+      color: #ffc107;
+      transform: scale(1.2);
+    }
+    .pain-scale {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+    }
+    .pain-level {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .pain-level:hover { background-color: #f5f5f5; transform: translateY(-5px); }
+    .pain-level.active { background-color: #e3f2fd; transform: scale(1.05); }
+    .pain-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-bottom: 5px;
+      transition: all 0.3s ease;
+    }
+    .pain-0 { background-color: #2ecc71; }
+    .pain-1 { background-color: #f1c40f; }
+    .pain-2 { background-color: #e67e22; }
+    .pain-3 { background-color: #e74c3c; }
+    .pain-4 { background-color: #c0392b; }
+    .rating-scale {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+    }
+    .rating-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .rating-option:hover { background-color: #f5f5f5; transform: translateY(-5px); }
+    .rating-option.active { background-color: #e3f2fd; transform: scale(1.05); }
+    .rating-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .rating-good { background-color: #2ecc71; }
+    .rating-fair { background-color: #3498db; }
+    .rating-poor { background-color: #e74c3c; }
+    .symptoms-checklist {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .symptom-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .symptom-item:hover { background: #e9ecef; }
+    .symptom-item.active { background: #e3f2fd; border-right: 3px solid var(--primary); }
+    .ai-analysis-box {
+      background: linear-gradient(135deg, #f3e5f5 0%, #e8f8f5 100%);
+      border-right: 4px solid var(--ai);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      position: relative;
+      overflow: hidden;
+      display: none;
+    }
+    .ai-analysis-box:before {
+      content: "🤖";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 2rem;
+      opacity: 0.1;
+      transform: rotate(15deg);
+    }
+    .ai-analysis-result {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border: 2px solid var(--ai);
+      box-shadow: 0 5px 15px rgba(155, 89, 182, 0.1);
+    }
+    .ai-recommendations {
+      background: #e8f4fc;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+    .ai-warning {
+      background: #ffebee;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-right: 4px solid var(--warning);
+    }
+    .ai-positive {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-right: 4px solid var(--secondary);
+    }
+    .ai-loading { text-align: center; padding: 20px; }
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .save-indicator {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: var(--secondary);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    .save-indicator.show { display: block; animation: fadeInOut 2s ease; }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      20% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+    .notification-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    .settings-box {
+      background: #f7f9fc;
+      border-right: 4px solid #3498db;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    .inline-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .inline-inputs-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+  </style>
 </head>
 <body>
-    <!-- الترويسة -->
-    <header class="header">
-        <h1><i class="fas fa-pills"></i> مشروع متابعة الأدوية</h1>
-        <p>نظام متكامل لإدارة وتتبع الأدوية للمرضى ومقدمي الرعاية الصحية</p>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-pills"></i> نظام متابعة الأدوية والتقويم الصحي - المريض</h1>
+      <p>سجل أدويتك، تتبع صحتك اليومية، واحصل على تحليل ذكي</p>
+      <div class="header-info">
+        <div class="info-card">
+          <div class="info-title">اسم المريض</div>
+          <div class="info-value" id="patient-name">جاري التحميل...</div>
+        </div>
+        <div class="info-card">
+          <div class="info-title">تاريخ اليوم</div>
+          <div class="info-value" id="current-date">--/--/----</div>
+        </div>
+        <div class="info-card">
+          <div class="info-title">الأدوية المأخوذة</div>
+          <div class="info-value" id="taken-count">0</div>
+        </div>
+        <div class="info-card">
+          <div class="info-title">التقييم اليومي</div>
+          <div class="info-value" id="daily-rating">لم يسجل بعد</div>
+        </div>
+        <div class="info-card">
+          <div class="info-title">الأدوية المتبقية</div>
+          <div class="info-value" id="remaining-count">0</div>
+        </div>
+        <div class="info-card">
+          <div class="info-title">حالة النظام</div>
+          <div class="info-value" id="notification-status" style="color: green;">جاهز</div>
+        </div>
+      </div>
     </header>
-    
-    <!-- قسم اللوحات -->
-    <section class="dashboard-section">
-        <h2 class="section-title">لوحات النظام</h2>
-        
-        <div class="dashboards-container">
-            <!-- لوحة مقدم الرعاية -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <i class="fas fa-user-md"></i>
-                    <h2>لوحة مقدم الرعاية</h2>
-                    <p>إدارة مرضى متعددة، تحديد الجرعات، وتتبع الالتزام بالعلاج</p>
-                </div>
-                <div class="card-content">
-                    <ul class="features-list">
-                        <li>إضافة وإدارة المرضى</li>
-                        <li>تحديد برامج الأدوية والجرعات</li>
-                        <li>مراقبة التزام المريض بالعلاج</li>
-                        <li>توليد تقارير متابعة</li>
-                        <li>إشعارات وتنبيهات للأدوية</li>
-                    </ul>
-                    <a href="caregiver.html" class="btn-access">
-                        <i class="fas fa-sign-in-alt"></i> الدخول إلى لوحة مقدم الرعاية
-                    </a>
-                </div>
-            </div>
-            
-            <!-- لوحة المريض -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <i class="fas fa-user-injured"></i>
-                    <h2>لوحة المريض</h2>
-                    <p>متابعة الأدوية الشخصية، التنبيهات، والتواصل مع مقدم الرعاية</p>
-                </div>
-                <div class="card-content">
-                    <ul class="features-list">
-                        <li>عرض جدول الأدوية اليومي</li>
-                        <li>تسجيل تناول الجرعات</li>
-                        <li>تذكير وتنبيهات بالأدوية</li>
-                        <li>التواصل مع مقدم الرعاية</li>
-                        <li>تتبع سجل الأدوية</li>
-                    </ul>
-                    <a href="patient.html" class="btn-access">
-                        <i class="fas fa-sign-in-alt"></i> الدخول إلى لوحة المريض
-                    </a>
-                </div>
-            </div>
+    <div class="next-reminder" id="next-reminder" style="display: none;">
+      <i class="fas fa-bell"></i> التذكير القادم: <span id="next-reminder-time">--:--</span> - <span id="next-reminder-med">لا توجد تذكيرات</span>
+    </div>
+    <div class="dashboard">
+      <div class="medication-section">
+        <h2><i class="fas fa-calendar-check"></i> جدول الأدوية اليومي</h2>
+        <div class="danger-box">
+          <h3><i class="fas fa-exclamation-triangle"></i> تنبيهات أمنية حرجة</h3>
+          <ul>
+            <li><strong>Eliquis + Plavix:</strong> ممنوع نسيان أو إيقاف بدون طبيب</li>
+            <li>لو في دوخة شديدة / هبوط / نزيف → طوارئ فورًا</li>
+            <li>Moxiflox: يتاخد في نفس المعاد يوميًا بعيد عن اللبن</li>
+            <li>Forxiga: اشرب مياه كويس وراقب السكر</li>
+          </ul>
         </div>
-    </section>
-    
-    <!-- قسم المعلومات -->
-    <section class="info-section">
-        <h3>مميزات نظام متابعة الأدوية</h3>
-        <div class="info-grid">
-            <div class="info-item">
-                <h4><i class="fas fa-bell"></i> نظام تذكير ذكي</h4>
-                <p>يقدم النظام تذكيرات ذكية بالأدوية عبر التنبيهات المنبثقة والإشعارات لتجنب نسيان الجرعات.</p>
+        <div class="time-slot" data-time="morning-fasting" data-hour="7" data-minute="0">
+          <div class="time-title">
+            <i class="fas fa-sun"></i> الصباح على الريق
+            <span class="notification-time">⏰ 7:00 صباحاً</span>
+          </div>
+          <div class="medication-item" data-med="Examide">
+            <div class="medication-info">
+              <div class="med-name">Examide 20 mg</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">مدر للبول - على معدة فارغة</div>
             </div>
-            
-            <div class="info-item">
-                <h4><i class="fas fa-chart-line"></i> تقارير متابعة</h4>
-                <p>إمكانية توليد تقارير مفصلة عن التزام المريض بالعلاج وتقدم حالته الصحية.</p>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-examide" data-med="Examide" data-time="morning-fasting">
+              <span class="checkmark"></span>
             </div>
-            
-            <div class="info-item">
-                <h4><i class="fas fa-comments"></i> تواصل مباشر</h4>
-                <p>قناة اتصال مباشرة بين المريض ومقدم الرعاية لتحسين جودة المتابعة والرعاية.</p>
+          </div>
+          <div class="medication-item" data-med="Norvasc">
+            <div class="medication-info">
+              <div class="med-name">Norvasc 10 mg</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">لضغط الدم - على الريق</div>
             </div>
-            
-            <div class="info-item">
-                <h4><i class="fas fa-mobile-alt"></i> متجاوب مع جميع الأجهزة</h4>
-                <p>واجهة مستخدم متكاملة تعمل بكفاءة على الهواتف الذكية، الأجهزة اللوحية، والحواسيب.</p>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-norvasc" data-med="Norvasc" data-time="morning-fasting">
+              <span class="checkmark"></span>
             </div>
+          </div>
+          <div class="medication-item" data-med="Contorloc">
+            <div class="medication-info">
+              <div class="med-name">Contorloc 40 mg</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">لحموضة المعدة</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-contorloc" data-med="Contorloc" data-time="morning-fasting">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Corvid">
+            <div class="medication-info">
+              <div class="med-name">Corvid 6.25 mg</div>
+              <div class="med-dosage">نصف قرص</div>
+              <div class="med-notes">لضغط الدم والقلب</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-corvid" data-med="Corvid" data-time="morning-fasting">
+              <span class="checkmark"></span>
+            </div>
+          </div>
         </div>
-    </section>
-    
-    <!-- التذييل -->
-    <footer class="footer">
-        <p>نظام متابعة الأدوية &copy; 2023 | تم التطوير لتحسين جودة الرعاية الصحية والالتزام بالعلاج</p>
+        <div class="time-slot" data-time="after-breakfast" data-hour="9" data-minute="0">
+          <div class="time-title">
+            <i class="fas fa-coffee"></i> بعد الفطار
+            <span class="notification-time">⏰ 9:00 صباحاً</span>
+          </div>
+          <div class="medication-item" data-med="Aldomet">
+            <div class="medication-info">
+              <div class="med-name">Aldomet 250 mg</div>
+              <div class="med-dosage">قرصين</div>
+              <div class="med-notes">الجرعة الأولى - سيتم تكرارها كل 8 ساعات</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-aldomet-1" data-med="Aldomet" data-time="after-breakfast">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item critical-med" data-med="Eliquis">
+            <div class="medication-info">
+              <div class="med-name">Eliquis 2.5 mg ⚠️</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">بعد الفطار</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-eliquis-1" data-med="Eliquis" data-time="after-breakfast">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Acetyl Cysteine">
+            <div class="medication-info">
+              <div class="med-name">Acetyl Cysteine</div>
+              <div class="med-dosage">كيس واحد</div>
+              <div class="med-notes">بعد الفطار</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-acetyl-morning" data-med="Acetyl Cysteine" data-time="after-breakfast">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+        </div>
+        <div class="time-slot" data-time="after-dinner" data-hour="20" data-minute="0">
+          <div class="time-title">
+            <i class="fas fa-utensils"></i> بعد العشاء
+            <span class="notification-time">⏰ 8:00 مساءً</span>
+          </div>
+          <div class="medication-item critical-med" data-med="Plavix">
+            <div class="medication-info">
+              <div class="med-name">Plavix 75 mg ⚠️</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">بعد العشاء</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-plavix" data-med="Plavix" data-time="after-dinner">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Lipitor">
+            <div class="medication-info">
+              <div class="med-name">Lipitor 40 mg</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">بعد العشاء</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-lipitor" data-med="Lipitor" data-time="after-dinner">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Moxiflox">
+            <div class="medication-info">
+              <div class="med-name">Moxiflox</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">بعيد عن الألبان ومضادات الحموضة</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-moxiflox" data-med="Moxiflox" data-time="after-dinner">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Spiriva">
+            <div class="medication-info">
+              <div class="med-name">Spiriva 18</div>
+              <div class="med-dosage">جرعة الاستنشاق 18</div>
+              <div class="med-notes">بعد العشاء</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-spiriva" data-med="Spiriva" data-time="after-dinner">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+        </div>
+        <div class="time-slot" data-time="before-bed" data-hour="22" data-minute="0">
+          <div class="time-title">
+            <i class="fas fa-moon"></i> قبل النوم
+            <span class="notification-time">⏰ 10:00 مساءً</span>
+          </div>
+          <div class="medication-item critical-med" data-med="Eliquis">
+            <div class="medication-info">
+              <div class="med-name">Eliquis 2.5 mg ⚠️</div>
+              <div class="med-dosage">قرص واحد</div>
+              <div class="med-notes">الجرعة المسائية (بعد 12 ساعة من الصباح)</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-eliquis-2" data-med="Eliquis" data-time="before-bed">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Aldomet">
+            <div class="medication-info">
+              <div class="med-name">Aldomet 250 mg</div>
+              <div class="med-dosage">قرصين</div>
+              <div class="med-notes">الجرعة الثالثة والأخيرة اليوم</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-aldomet-3" data-med="Aldomet" data-time="before-bed">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+          <div class="medication-item" data-med="Acetyl Cysteine">
+            <div class="medication-info">
+              <div class="med-name">Acetyl Cysteine</div>
+              <div class="med-dosage">كيس واحد</div>
+              <div class="med-notes">مذيب للبلغم - الجرعة المسائية</div>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" class="med-checkbox" id="med-acetyl-night" data-med="Acetyl Cysteine" data-time="before-bed">
+              <span class="checkmark"></span>
+            </div>
+          </div>
+        </div>
+        <div class="progress-section">
+          <h3><i class="fas fa-chart-line"></i> تقدم اليوم</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-text">
+            <span>الأدوية المأخوذة: <span id="taken-count-display">0</span></span>
+            <span>الأدوية المتبقية: <span id="remaining-count-display">0</span></span>
+          </div>
+          <div class="button-group">
+            <button class="btn btn-success" id="reset-day"><i class="fas fa-redo"></i> بدء يوم جديد</button>
+            <button class="btn" id="save-data"><i class="fas fa-save"></i> حفظ البيانات يدوياً</button>
+            <button class="btn btn-warning" id="mark-all-taken"><i class="fas fa-check-double"></i> تعليم الكل كمأخوذ</button>
+            <button class="btn btn-ai" id="analyze-with-ai"><i class="fas fa-robot"></i> تحليل الحالة بالذكاء الاصطناعي</button>
+          </div>
+        </div>
+      </div>
+      <div class="calendar-section">
+        <h2><i class="fas fa-calendar-day"></i> التقويم الصحي اليومي</h2>
+        <div class="calendar-box">
+          <h4><i class="fas fa-star"></i> تقييم الصحة العامة (1-5 نجوم)</h4>
+          <div class="star-rating" id="health-rating">
+            <input type="radio" id="star5" name="health" value="5"><label for="star5">★</label>
+            <input type="radio" id="star4" name="health" value="4"><label for="star4">★</label>
+            <input type="radio" id="star3" name="health" value="3"><label for="star3">★</label>
+            <input type="radio" id="star2" name="health" value="2"><label for="star2">★</label>
+            <input type="radio" id="star1" name="health" value="1"><label for="star1">★</label>
+          </div>
+          <h4><i class="fas fa-thermometer-half"></i> مستوى الألم (0-4)</h4>
+          <div class="pain-scale" id="pain-scale">
+            <div class="pain-level" data-level="0"><div class="pain-circle pain-0"></div><span>0 - لا ألم</span></div>
+            <div class="pain-level" data-level="1"><div class="pain-circle pain-1"></div><span>1 - خفيف</span></div>
+            <div class="pain-level" data-level="2"><div class="pain-circle pain-2"></div><span>2 - متوسط</span></div>
+            <div class="pain-level" data-level="3"><div class="pain-circle pain-3"></div><span>3 - شديد</span></div>
+            <div class="pain-level" data-level="4"><div class="pain-circle pain-4"></div><span>4 - لا يُحتمل</span></div>
+          </div>
+          <h4><i class="fas fa-bed"></i> جودة النوم الليلة الماضية</h4>
+          <div class="rating-scale" id="sleep-quality">
+            <div class="rating-option" data-quality="جيد"><div class="rating-circle rating-good">جيد</div><span>نوم عميق</span></div>
+            <div class="rating-option" data-quality="متوسط"><div class="rating-circle rating-fair">متوسط</div><span>نوم متقطع</span></div>
+            <div class="rating-option" data-quality="سيء"><div class="rating-circle rating-poor">سيء</div><span>أرق</span></div>
+          </div>
+          <h4><i class="fas fa-utensils"></i> الشهية اليوم</h4>
+          <div class="rating-scale" id="appetite-rating">
+            <div class="rating-option" data-appetite="جيدة"><div class="rating-circle rating-good">جيدة</div><span>أكلت جيداً</span></div>
+            <div class="rating-option" data-appetite="متوسطة"><div class="rating-circle rating-fair">متوسطة</div><span>قليل من الأكل</span></div>
+            <div class="rating-option" data-appetite="ضعيفة"><div class="rating-circle rating-poor">ضعيفة</div><span>بالكاء أكلت</span></div>
+          </div>
+          <h4><i class="fas fa-stethoscope"></i> الأعراض اليومية</h4>
+          <div class="symptoms-checklist" id="symptoms-checklist">
+            <div class="symptom-item" data-symptom="صداع"><input type="checkbox" id="symptom-headache"><label for="symptom-headache">صداع</label></div>
+            <div class="symptom-item" data-symptom="دوخة"><input type="checkbox" id="symptom-dizziness"><label for="symptom-dizziness">دوخة</label></div>
+            <div class="symptom-item" data-symptom="غثيان"><input type="checkbox" id="symptom-nausea"><label for="symptom-nausea">غثيان</label></div>
+            <div class="symptom-item" data-symptom="تعب"><input type="checkbox" id="symptom-fatigue"><label for="symptom-fatigue">تعب</label></div>
+            <div class="symptom-item" data-symptom="ضيق تنفس"><input type="checkbox" id="symptom-breathlessness"><label for="symptom-breathlessness">ضيق تنفس</label></div>
+            <div class="symptom-item" data-symptom="آلام في الصدر"><input type="checkbox" id="symptom-chest-pain"><label for="symptom-chest-pain">آلام في الصدر</label></div>
+            <div class="symptom-item" data-symptom="سعال"><input type="checkbox" id="symptom-cough"><label for="symptom-cough">سعال</label></div>
+            <div class="symptom-item" data-symptom="آلام في المفاصل"><input type="checkbox" id="symptom-joint-pain"><label for="symptom-joint-pain">آلام في المفاصل</label></div>
+          </div>
+          <h4><i class="fas fa-notes-medical"></i> ملاحظاتي اليومية</h4>
+          <textarea id="daily-notes" rows="4" placeholder="اكتب ملاحظاتك عن اليوم، أي أعراض جديدة، أو أي شيء تريد تسجيله..."></textarea>
+          <button class="btn btn-health" id="save-daily-calendar"><i class="fas fa-calendar-check"></i> حفظ التقويم اليومي</button>
+        </div>
+        <div class="ai-analysis-box" id="ai-analysis-box">
+          <h3><i class="fas fa-robot"></i> تحليل الذكاء الاصطناعي</h3>
+          <div id="ai-analysis-result"></div>
+        </div>
+        <div class="history-section">
+          <h3><i class="fas fa-history"></i> سجل متابعتي</h3>
+          <div id="history-list">
+            <div class="empty-history" id="empty-history">
+              <i class="fas fa-history"></i>
+              <p>لا توجد متابعات مسجلة</p>
+              <p>سيظهر سجل المتابعات هنا عند أخذ الأدوية</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <h2><i class="fas fa-user"></i> معلوماتي وإعداداتي</h2>
+        <div class="warning-box">
+          <h4><i class="fas fa-user-md"></i> معلوماتي الشخصية</h4>
+          <div class="input-group">
+            <label for="patient-name-input">اسمي</label>
+            <input type="text" id="patient-name-input" placeholder="أدخل اسمك" value="والد/والدة">
+          </div>
+          <div class="input-group">
+            <label for="patient-age">عمري</label>
+            <input type="number" id="patient-age" placeholder="أدخل عمرك" value="65">
+          </div>
+        </div>
+        <div class="repeated-meds">
+          <h4><i class="fas fa-history"></i> أدوية متكررة</h4>
+          <p><strong>Aldomet:</strong> 2 قرص كل 8 ساعات (3 مرات يوميًا)</p>
+          <p><strong>Eliquis:</strong> قرص كل 12 ساعة</p>
+          <p><strong>Acetyl Cysteine:</strong> كيس كل 12 ساعة</p>
+        </div>
+        <div class="notification-box">
+          <h4><i class="fas fa-bell"></i> جدول تذكيرات اليوم</h4>
+          <div id="today-notifications">
+            <div class="empty-history">
+              <i class="fas fa-bell-slash"></i>
+              <p>لا توجد تذكيرات اليوم</p>
+            </div>
+          </div>
+        </div>
+        <div class="settings-box">
+          <h4><i class="fas fa-mobile-alt"></i> الإشعارات</h4>
+          <div class="inline-inputs-3">
+            <div>
+              <label for="enable-notifications">تفعيل تنبيهات الهاتف</label>
+              <select id="enable-notifications">
+                <option value="off">غير مفعّل</option>
+                <option value="on">مفعّل</option>
+              </select>
+            </div>
+            <div>
+              <label for="grace-minutes">فترة السماح (دقائق)</label>
+              <input type="number" id="grace-minutes" min="0" value="15">
+            </div>
+            <div>
+              <label for="caregiver-enabled">إشعار مقدم الرعاية</label>
+              <select id="caregiver-enabled">
+                <option value="off">غير مفعّل</option>
+                <option value="on">مفعّل</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group" style="margin-top:10px;">
+            <label for="caregiver-webhook">رابط Webhook لمقدم الرعاية</label>
+            <input type="url" id="caregiver-webhook" placeholder="ضع رابط Webhook لاستقبال التنبيه (Zapier/IFTTT/خادمك)">
+          </div>
+          <button class="btn" id="test-notification"><i class="fas fa-bell"></i> اختبار التنبيه</button>
+          <button class="btn" id="test-caregiver"><i class="fas fa-paper-plane"></i> اختبار إشعار مقدم الرعاية</button>
+          <h4 style="margin-top:15px;"><i class="fas fa-cloud"></i> Firebase Cloud Messaging</h4>
+          <div class="inline-inputs">
+            <div>
+              <label for="enable-fcm">تفعيل FCM</label>
+              <select id="enable-fcm">
+                <option value="off">غير مفعّل</option>
+                <option value="on">مفعّل</option>
+              </select>
+            </div>
+            <div>
+              <label for="fcm-vapid">VAPID Key</label>
+              <input type="text" id="fcm-vapid" placeholder="ضع مفاتيح VAPID العامة">
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="firebase-config-json">Firebase Config (JSON)</label>
+            <textarea id="firebase-config-json" rows="4" placeholder='{"apiKey":"","authDomain":"","projectId":"","messagingSenderId":"","appId":""}'></textarea>
+          </div>
+          <div class="inline-inputs">
+            <div>
+              <label>رمز جهاز الوالد (FCM)</label>
+              <input type="text" id="patient-fcm-token" readonly placeholder="سيظهر الرمز هنا بعد التفعيل">
+            </div>
+            <div style="display:flex;align-items:flex-end">
+              <button class="btn" id="copy-patient-token"><i class="fas fa-copy"></i> نسخ الرمز</button>
+            </div>
+          </div>
+        </div>
+        <div class="button-group" style="margin-top: 20px;">
+          <button class="btn btn-warning" id="clear-history"><i class="fas fa-trash-alt"></i> مسح السجل</button>
+          <button class="btn" id="export-data"><i class="fas fa-download"></i> تصدير بياناتي</button>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p>نظام متابعة الأدوية والتقويم الصحي للمريض &copy; 2023 | نظام يعمل محلياً بدون اتصال بالإنترنت</p>
+      <p>جميع المعلومات الطبية يجب مراجعتها مع الطبيب المعالج</p>
+      <p id="last-save-time" style="margin-top: 10px; font-size: 0.8rem;"></p>
     </footer>
+  </div>
+  <div class="save-indicator" id="save-indicator"><i class="fas fa-check-circle"></i> تم الحفظ تلقائياً</div>
+  <script>
+    const TIME_SLOTS = [
+      { time: "morning-fasting", hour: 7, minute: 0, name: "الصباح على الريق" },
+      { time: "after-breakfast", hour: 9, minute: 0, name: "بعد الفطار" },
+      { time: "before-lunch", hour: 13, minute: 0, name: "قبل الغداء" },
+      { time: "after-lunch", hour: 15, minute: 0, name: "بعد الغداء" },
+      { time: "afternoon", hour: 17, minute: 0, name: "العصر" },
+      { time: "6pm", hour: 18, minute: 0, name: "الساعة 6 مساءً" },
+      { time: "after-dinner", hour: 20, minute: 0, name: "بعد العشاء" },
+      { time: "before-bed", hour: 22, minute: 0, name: "قبل النوم" }
+    ];
+    const appData = {
+      patientName: "والد/والدة",
+      patientAge: 65,
+      medications: {},
+      history: [],
+      currentReport: {
+        date: new Date().toISOString().split('T')[0],
+        healthRating: 0,
+        painLevel: 0,
+        sleepQuality: "",
+        appetite: "",
+        symptoms: [],
+        notes: "",
+        medicationProgress: 0
+      },
+      aiAnalysis: {},
+      today: new Date().toDateString(),
+      lastSave: null,
+      settings: {
+        notificationsEnabled: false,
+        graceMinutes: 15,
+        caregiverEnabled: false,
+        caregiverWebhookUrl: "",
+        alertsSent: {}
+      }
+    };
+    const allMedications = [
+      { id: 'med-examide', name: 'Examide', time: 'morning-fasting', critical: false },
+      { id: 'med-norvasc', name: 'Norvasc', time: 'morning-fasting', critical: false },
+      { id: 'med-contorloc', name: 'Contorloc', time: 'morning-fasting', critical: false },
+      { id: 'med-corvid', name: 'Corvid', time: 'morning-fasting', critical: false },
+      { id: 'med-aldomet-1', name: 'Aldomet', time: 'after-breakfast', critical: false },
+      { id: 'med-eliquis-1', name: 'Eliquis', time: 'after-breakfast', critical: true },
+      { id: 'med-acetyl-morning', name: 'Acetyl Cysteine', time: 'after-breakfast', critical: false },
+      { id: 'med-forxiga', name: 'Forxiga', time: 'before-lunch', critical: false },
+      { id: 'med-suprax', name: 'Suprax', time: 'after-lunch', critical: false },
+      { id: 'med-suprax-susp', name: 'Suprax Suspension', time: 'after-lunch', critical: false },
+      { id: 'med-eraloner', name: 'Eraloner', time: 'afternoon', critical: false },
+      { id: 'med-aldomet-2', name: 'Aldomet', time: 'afternoon', critical: false },
+      { id: 'med-cardura', name: 'Cardura', time: '6pm', critical: false },
+      { id: 'med-plavix', name: 'Plavix', time: 'after-dinner', critical: true },
+      { id: 'med-lipitor', name: 'Lipitor', time: 'after-dinner', critical: false },
+      { id: 'med-moxiflox', name: 'Moxiflox', time: 'after-dinner', critical: false },
+      { id: 'med-spiriva', name: 'Spiriva', time: 'after-dinner', critical: false },
+      { id: 'med-eliquis-2', name: 'Eliquis', time: 'before-bed', critical: true },
+      { id: 'med-aldomet-3', name: 'Aldomet', time: 'before-bed', critical: false },
+      { id: 'med-acetyl-night', name: 'Acetyl Cysteine', time: 'before-bed', critical: false }
+    ];
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        updateCurrentDate();
+        loadSavedData();
+        initCheckboxes();
+        initButtons();
+        initCalendar();
+        updateProgress();
+        updateHistoryList();
+        updateLastSaveTime();
+        updateReminders();
+        applyAnimations();
+        console.log('✅ نظام المريض جاهز للاستخدام');
+        showNotification('مرحباً', 'النظام جاهز لتسجيل أدويتك وتحليل صحتك', 'success');
+        ensureServiceWorkerAndPermission();
+      } catch (error) {
+        console.error('❌ خطأ في تهيئة التطبيق:', error);
+        showNotification('خطأ في التهيئة', 'تعذر تحميل التطبيق بشكل صحيح', 'error');
+      }
+    });
+    function applyAnimations() {
+      document.querySelectorAll('.time-slot').forEach((slot, index) => {
+        slot.style.animationDelay = `${index * 0.1}s`;
+      });
+      document.querySelectorAll('.medication-item').forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.05}s`;
+      });
+    }
+    function loadSavedData() {
+      const savedData = localStorage.getItem('patientMedicationData');
+      if (savedData) {
+        try {
+          const parsedData = JSON.parse(savedData);
+          if (parsedData.today === appData.today) {
+            Object.assign(appData, parsedData);
+            document.getElementById('patient-name-input').value = appData.patientName;
+            document.getElementById('patient-name').textContent = appData.patientName;
+            document.getElementById('patient-age').value = appData.patientAge || 65;
+            allMedications.forEach(med => {
+              const checkbox = document.getElementById(med.id);
+              if (checkbox) {
+                const medKey = `${med.name}-${med.time}`;
+                if (appData.medications[medKey]) {
+                  checkbox.checked = true;
+                  updateMedicationUI(checkbox, false);
+                }
+              }
+            });
+            if (appData.currentReport) {
+              updateCalendarUI(appData.currentReport);
+            }
+            console.log('✅ تم تحميل البيانات المحفوظة بنجاح');
+          }
+        } catch (error) {
+          console.error('❌ خطأ في تحميل البيانات المحفوظة:', error);
+        }
+      }
+      updateProgress();
+    }
+    function autoSaveData() {
+      try {
+        appData.lastSave = new Date().toISOString();
+        appData.today = new Date().toDateString();
+        localStorage.setItem('patientMedicationData', JSON.stringify(appData));
+        showSaveIndicator();
+        updateLastSaveTime();
+      } catch (error) {
+        console.error('❌ خطأ في الحفظ التلقائي:', error);
+      }
+    }
+    function updateCurrentDate() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = now.toLocaleDateString('ar-EG', options);
+    }
+    function updateLastSaveTime() {
+      const lastSaveElement = document.getElementById('last-save-time');
+      if (appData.lastSave) {
+        const saveDate = new Date(appData.lastSave);
+        const timeString = saveDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        lastSaveElement.textContent = `آخر تحديث: ${timeString}`;
+      }
+      const enableFcmEl = document.getElementById('enable-fcm');
+      if (enableFcmEl) enableFcmEl.value = appData.settings.firebaseEnabled ? 'on' : 'off';
+      const vapidEl = document.getElementById('fcm-vapid');
+      if (vapidEl) vapidEl.value = appData.settings.firebaseVapidKey || '';
+      const cfgEl = document.getElementById('firebase-config-json');
+      if (cfgEl) cfgEl.value = appData.settings.firebaseConfigJson || '';
+      const tokenEl = document.getElementById('patient-fcm-token');
+      if (tokenEl) tokenEl.value = appData.settings.patientFcmToken || '';
+    }
+    function initCheckboxes() {
+      allMedications.forEach(med => {
+        const checkbox = document.getElementById(med.id);
+        if (checkbox) {
+          checkbox.addEventListener('change', function() {
+            updateMedicationUI(this, true);
+            updateProgress();
+            updateHistory(this);
+            updateReminders();
+          });
+          const checkmark = checkbox.nextElementSibling;
+          if (checkmark) {
+            checkmark.addEventListener('click', function() {
+              checkbox.checked = !checkbox.checked;
+              checkbox.dispatchEvent(new Event('change'));
+            });
+          }
+        }
+      });
+    }
+    function initCalendar() {
+      const starInputs = document.querySelectorAll('#health-rating input');
+      starInputs.forEach(input => {
+        input.addEventListener('change', function() {
+          appData.currentReport.healthRating = parseInt(this.value);
+          autoSaveData();
+          updateProgress();
+        });
+      });
+      const painLevels = document.querySelectorAll('.pain-level');
+      painLevels.forEach(level => {
+        level.addEventListener('click', function() {
+          const painLevel = parseInt(this.getAttribute('data-level'));
+          painLevels.forEach(l => l.classList.remove('active'));
+          this.classList.add('active');
+          appData.currentReport.painLevel = painLevel;
+          autoSaveData();
+        });
+      });
+      const sleepOptions = document.querySelectorAll('#sleep-quality .rating-option');
+      sleepOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const quality = this.getAttribute('data-quality');
+          sleepOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          appData.currentReport.sleepQuality = quality;
+          autoSaveData();
+        });
+      });
+      const appetiteOptions = document.querySelectorAll('#appetite-rating .rating-option');
+      appetiteOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          const appetite = this.getAttribute('data-appetite');
+          appetiteOptions.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+          appData.currentReport.appetite = appetite;
+          autoSaveData();
+        });
+      });
+      const symptomCheckboxes = document.querySelectorAll('.symptom-item input');
+      symptomCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const symptomItem = this.closest('.symptom-item');
+          if (this.checked) {
+            symptomItem.classList.add('active');
+          } else {
+            symptomItem.classList.remove('active');
+          }
+          updateSymptomsList();
+          autoSaveData();
+        });
+      });
+      const dailyNotes = document.getElementById('daily-notes');
+      dailyNotes.addEventListener('input', function() {
+        appData.currentReport.notes = this.value;
+        autoSaveData();
+      });
+    }
+    function updateCalendarUI(report) {
+      if (report.healthRating > 0) {
+        const starId = `star${report.healthRating}`;
+        const starInput = document.getElementById(starId);
+        if (starInput) { starInput.checked = true; }
+      }
+      if (report.painLevel !== undefined) {
+        const painLevelsSet = document.querySelectorAll('.pain-level');
+        painLevelsSet.forEach(level => {
+          if (parseInt(level.getAttribute('data-level')) === report.painLevel) {
+            level.classList.add('active');
+          }
+        });
+      }
+      if (report.sleepQuality) {
+        const sleepOptionsSet = document.querySelectorAll('#sleep-quality .rating-option');
+        sleepOptionsSet.forEach(option => {
+          if (option.getAttribute('data-quality') === report.sleepQuality) {
+            option.classList.add('active');
+          }
+        });
+      }
+      if (report.appetite) {
+        const appetiteOptionsSet = document.querySelectorAll('#appetite-rating .rating-option');
+        appetiteOptionsSet.forEach(option => {
+          if (option.getAttribute('data-appetite') === report.appetite) {
+            option.classList.add('active');
+          }
+        });
+      }
+      if (report.symptoms && report.symptoms.length > 0) {
+        report.symptoms.forEach(symptom => {
+          const symptomId = `symptom-${symptom.toLowerCase().replace(/ /g, '-')}`;
+          const checkbox = document.getElementById(symptomId);
+          if (checkbox) {
+            checkbox.checked = true;
+            checkbox.closest('.symptom-item').classList.add('active');
+          }
+        });
+      }
+      if (report.notes) {
+        document.getElementById('daily-notes').value = report.notes;
+      }
+      if (report.healthRating > 0) {
+        const stars = '★'.repeat(report.healthRating) + '☆'.repeat(5 - report.healthRating);
+        const ratingEl = document.getElementById('daily-rating');
+        ratingEl.innerHTML = stars;
+        ratingEl.style.color = '#ffc107';
+      }
+    }
+    function updateSymptomsList() {
+      const symptoms = [];
+      const symptomCheckboxesChecked = document.querySelectorAll('.symptom-item input:checked');
+      symptomCheckboxesChecked.forEach(checkbox => {
+        const symptomItem = checkbox.closest('.symptom-item');
+        const symptom = symptomItem.getAttribute('data-symptom');
+        symptoms.push(symptom);
+      });
+      appData.currentReport.symptoms = symptoms;
+    }
+    function updateMedicationUI(checkbox, saveData = true) {
+      const medicationItem = checkbox.closest('.medication-item');
+      const medName = checkbox.getAttribute('data-med');
+      const time = checkbox.getAttribute('data-time');
+      const medKey = `${medName}-${time}`;
+      if (checkbox.checked) {
+        medicationItem.classList.add('status-taken');
+        medicationItem.classList.remove('status-missed');
+        medicationItem.classList.add('checked');
+        appData.medications[medKey] = {
+          taken: true,
+          timestamp: new Date().toISOString(),
+          medication: medName,
+          time: time
+        };
+      } else {
+        medicationItem.classList.add('status-missed');
+        medicationItem.classList.remove('status-taken');
+        medicationItem.classList.remove('checked');
+        delete appData.medications[medKey];
+      }
+      const totalMeds = allMedications.length;
+      const takenMeds = Object.keys(appData.medications).length;
+      appData.currentReport.medicationProgress = Math.round((takenMeds / totalMeds) * 100);
+      if (saveData) { autoSaveData(); }
+    }
+    function updateProgress() {
+      const totalMeds = allMedications.length;
+      const takenMeds = Object.keys(appData.medications).length;
+      const remainingMeds = totalMeds - takenMeds;
+      const progressPercent = (takenMeds / totalMeds) * 100;
+      const takenCountEl = document.getElementById('taken-count');
+      if (takenCountEl) takenCountEl.textContent = takenMeds;
+      const remainingCountEl = document.getElementById('remaining-count');
+      if (remainingCountEl) remainingCountEl.textContent = remainingMeds;
+      const takenDisplayEl = document.getElementById('taken-count-display');
+      if (takenDisplayEl) takenDisplayEl.textContent = takenMeds;
+      const remainingDisplayEl = document.getElementById('remaining-count-display');
+      if (remainingDisplayEl) remainingDisplayEl.textContent = remainingMeds;
+      const progressFillEl = document.getElementById('progress-fill');
+      if (progressFillEl) progressFillEl.style.width = `${progressPercent}%`;
+      if (appData.currentReport.healthRating > 0) {
+        const stars = '★'.repeat(appData.currentReport.healthRating) + '☆'.repeat(5 - appData.currentReport.healthRating);
+        const ratingEl = document.getElementById('daily-rating');
+        ratingEl.innerHTML = stars;
+        ratingEl.style.color = '#ffc107';
+      }
+    }
+    function updateHistory(checkbox) {
+      const medName = checkbox.getAttribute('data-med');
+      const isChecked = checkbox.checked;
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+      const historyEntry = {
+        medication: medName,
+        status: isChecked ? 'taken' : 'missed',
+        time: timeString,
+        timestamp: now.toISOString()
+      };
+      appData.history.unshift(historyEntry);
+      if (appData.history.length > 20) {
+        appData.history = appData.history.slice(0, 20);
+      }
+      updateHistoryList();
+    }
+    function updateHistoryList() {
+      const historyList = document.getElementById('history-list');
+      const emptyHistory = document.getElementById('empty-history');
+      if (!appData.history.length) {
+        if (emptyHistory) emptyHistory.style.display = 'block';
+        if (historyList) historyList.innerHTML = '';
+        return;
+      }
+      if (emptyHistory) emptyHistory.style.display = 'none';
+      const recentHistory = appData.history.slice(0, 10);
+      let html = '';
+      recentHistory.forEach(entry => {
+        const statusClass = entry.status === 'taken' ? 'status-taken-badge' : 'status-missed-badge';
+        const statusText = entry.status === 'taken' ? 'تم أخذه' : 'ملغي';
+        html += `
+          <div class="history-item">
+            <div class="history-time">${entry.time}</div>
+            <div class="history-med">${entry.medication}</div>
+            <div class="history-status ${statusClass}">${statusText}</div>
+          </div>
+        `;
+      });
+      if (historyList) historyList.innerHTML = html;
+    }
+    function updateReminders() {
+      updateTodayNotifications();
+      updateNextReminder();
+    }
+    function updateTodayNotifications() {
+      const container = document.getElementById('today-notifications');
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      const upcomingTimes = TIME_SLOTS.filter(time =>
+        time.hour > currentHour || (time.hour === currentHour && time.minute > currentMinute)
+      );
+      if (!upcomingTimes.length) {
+        if (container) {
+          container.innerHTML = `
+            <div class="empty-history">
+              <i class="fas fa-bell-slash"></i>
+              <p>لا توجد تذكيرات قادمة اليوم</p>
+            </div>
+          `;
+        }
+        return;
+      }
+      let html = '';
+      upcomingTimes.forEach(timeSlot => {
+        const medsInSlot = allMedications.filter(med => med.time === timeSlot.time);
+        const untakenMeds = medsInSlot.filter(med => {
+          const medKey = `${med.name}-${timeSlot.time}`;
+          return !appData.medications[medKey];
+        });
+        if (!untakenMeds.length) return;
+        const timeString = `${timeSlot.hour}:${timeSlot.minute.toString().padStart(2, '0')}`;
+        const medNames = untakenMeds.map(med => med.name).join(', ');
+        html += `
+          <div class="notification-item">
+            <div>
+              <strong>${timeSlot.name}</strong><br>
+              <small>${timeString} - ${medNames}</small>
+            </div>
+            <span class="notification-time">${timeString}</span>
+          </div>
+        `;
+      });
+      if (container) {
+        container.innerHTML = html || `
+          <div class="empty-history">
+            <i class="fas fa-check-circle"></i>
+            <p>جميع أدوية اليوم أخذت</p>
+          </div>
+        `;
+      }
+    }
+    function updateNextReminder() {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      let nextReminder = null;
+      TIME_SLOTS.forEach(timeSlot => {
+        if (timeSlot.hour > currentHour || (timeSlot.hour === currentHour && timeSlot.minute > currentMinute)) {
+          const medsInSlot = allMedications.filter(med => med.time === timeSlot.time);
+          const hasUntakenMeds = medsInSlot.some(med => {
+            const medKey = `${med.name}-${timeSlot.time}`;
+            return !appData.medications[medKey];
+          });
+          if (hasUntakenMeds && (!nextReminder || timeSlot.hour < nextReminder.hour || (timeSlot.hour === nextReminder.hour && timeSlot.minute < nextReminder.minute))) {
+            nextReminder = timeSlot;
+          }
+        }
+      });
+      const reminderElement = document.getElementById('next-reminder');
+      if (nextReminder) {
+        const timeString = `${nextReminder.hour}:${nextReminder.minute.toString().padStart(2, '0')}`;
+        document.getElementById('next-reminder-time').textContent = timeString;
+        document.getElementById('next-reminder-med').textContent = nextReminder.name;
+        reminderElement.style.display = 'block';
+      } else {
+        reminderElement.style.display = 'none';
+      }
+    }
+    function saveDailyCalendar() {
+      updateSymptomsList();
+      appData.currentReport.notes = document.getElementById('daily-notes').value;
+      appData.currentReport.date = new Date().toISOString().split('T')[0];
+      const totalMeds = allMedications.length;
+      const takenMeds = Object.keys(appData.medications).length;
+      appData.currentReport.medicationProgress = Math.round((takenMeds / totalMeds) * 100);
+      autoSaveData();
+      showNotification('تم الحفظ', 'تم حفظ التقويم اليومي بنجاح', 'success');
+    }
+    function analyzeWithAI() {
+      saveDailyCalendar();
+      const aiBox = document.getElementById('ai-analysis-box');
+      const aiResult = document.getElementById('ai-analysis-result');
+      aiBox.style.display = 'block';
+      aiResult.innerHTML = `
+        <div class="ai-loading">
+          <div class="loading-spinner"></div>
+          <p>جاري تحليل بياناتك الصحية...</p>
+          <p>هذا قد يستغرق بضع ثوانٍ</p>
+        </div>
+      `;
+      setTimeout(() => {
+        try {
+          const analysis = generateAIAnalysis();
+          aiResult.innerHTML = `
+            <div class="ai-analysis-result">
+              <h4><i class="fas fa-brain"></i> تحليل الذكاء الاصطناعي</h4>
+              <div class="alert alert-ai">
+                <i class="fas fa-robot"></i>
+                <div>
+                  <strong>${analysis.summary}</strong>
+                  <p>${analysis.detailedAnalysis}</p>
+                </div>
+              </div>
+              ${analysis.recommendations.length > 0 ? `
+              <div class="ai-recommendations">
+                <h5><i class="fas fa-lightbulb"></i> توصيات الذكاء الاصطناعي:</h5>
+                <ul>${analysis.recommendations.map(rec => `<li>${rec}</li>`).join('')}</ul>
+              </div>` : ''}
+              ${analysis.warnings.length > 0 ? `
+              <div class="ai-warning">
+                <h5><i class="fas fa-exclamation-triangle"></i> تحذيرات هامة:</h5>
+                <ul>${analysis.warnings.map(warn => `<li>${warn}</li>`).join('')}</ul>
+              </div>` : ''}
+              ${analysis.positivePoints.length > 0 ? `
+              <div class="ai-positive">
+                <h5><i class="fas fa-thumbs-up"></i> نقاط إيجابية:</h5>
+                <ul>${analysis.positivePoints.map(point => `<li>${point}</li>`).join('')}</ul>
+              </div>` : ''}
+              <div class="button-group" style="margin-top: 15px;">
+                <button class="btn" onclick="document.getElementById('ai-analysis-box').style.display = 'none'"><i class="fas fa-times"></i> إغلاق</button>
+              </div>
+            </div>
+          `;
+          appData.aiAnalysis = analysis;
+          appData.aiAnalysis.date = new Date().toISOString();
+          autoSaveData();
+        } catch (error) {
+          console.error('❌ خطأ في تحليل الذكاء الاصطناعي:', error);
+          aiResult.innerHTML = `
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              <div>
+                <strong>تعذر تحليل البيانات</strong>
+                <p>حدث خطأ أثناء تحليل بياناتك الصحية.</p>
+                <button class="btn btn-ai" onclick="analyzeWithAI()" style="margin-top: 10px;"><i class="fas fa-redo"></i> المحاولة مرة أخرى</button>
+              </div>
+            </div>
+          `;
+        }
+      }, 1500);
+    }
+    function generateAIAnalysis() {
+      const totalMeds = allMedications.length;
+      const takenMeds = Object.keys(appData.medications).length;
+      const medicationProgress = Math.round((takenMeds / totalMeds) * 100);
+      const report = appData.currentReport;
+      const criticalMeds = allMedications.filter(med => med.critical);
+      const takenCriticalMeds = criticalMeds.filter(med => {
+        const medKey = `${med.name}-${med.time}`;
+        return appData.medications[medKey];
+      });
+      let summary = "حالتك الصحية مستقرة نسبياً";
+      let detailedAnalysis = "";
+      const recommendations = [];
+      const warnings = [];
+      const positivePoints = [];
+      if (medicationProgress >= 90) {
+        positivePoints.push("التزام ممتاز بتناول الأدوية بنسبة " + medicationProgress + "%");
+        detailedAnalysis += "مستوى الالتزام بالأدوية ممتاز، مما يساهم في استقرار الحالة الصحية.";
+      } else if (medicationProgress >= 70) {
+        detailedAnalysis += "مستوى الالتزام بالأدوية جيد، ولكن يمكن تحسينه للمساعدة في استقرار الحالة الصحية.";
+        recommendations.push("حاول الالتزام بجميع الأدوية المقررة لتحقيق أفضل نتائج علاجية");
+      } else {
+        detailedAnalysis += "مستوى الالتزام بالأدوية يحتاج لتحسين، حيث أن بعض الأدوية المهمة قد فات موعدها.";
+        warnings.push("انخفاض مستوى الالتزام بالأدوية قد يؤثر سلباً على الحالة الصحية");
+        recommendations.push("تذكير: الأدوية المميّعة للدم (Eliquis و Plavix) يجب تناولها بانتظام لتجنب المخاطر");
+      }
+      if (takenCriticalMeds.length === criticalMeds.length) {
+        positivePoints.push("تم تناول جميع الأدوية الحرجة (Eliquis, Plavix) وهذا جيد للغاية");
+      } else {
+        warnings.push("بعض الأدوية الحرجة لم تؤخذ بعد. هذه الأدوية مهمة للغاية للوقاية من الجلطات");
+      }
+      if (report.painLevel >= 3) {
+        summary = "هناك ارتفاع في مستوى الألم";
+        detailedAnalysis += " مستوى الألم مرتفع (" + report.painLevel + "/4)، مما قد يؤثر على جودة الحياة.";
+        recommendations.push("تحدث مع طبيبك حول إدارة الألم إذا استمر المستوى الحالي");
+      } else if (report.painLevel > 0) {
+        detailedAnalysis += " مستوى الألم مقبول ولكن يحتاج للمراقبة.";
+      } else {
+        positivePoints.push("لا توجد آلام تُذكر، وهذا مؤشر إيجابي");
+      }
+      if (report.sleepQuality === "سيء") {
+        detailedAnalysis += " جودة النوم غير جيدة، مما قد يؤثر على مستوى الطاقة والصحة العامة.";
+        recommendations.push("جرب تقنيات الاسترخاء قبل النوم وتحسين بيئة النوم");
+      } else if (report.sleepQuality === "جيد") {
+        positivePoints.push("نوعية النوم جيدة، وهذا يساعد في التعافي وتحسين المناعة");
+      }
+      if (report.appetite === "ضعيفة") {
+        detailedAnalysis += " الشهية منخفضة، مما قد يؤثر على التغذية والطاقة.";
+        recommendations.push("حاول تقسيم الوجبات إلى وجبات صغيرة متكررة لتشجيع الأكل");
+      } else if (report.appetite === "جيدة") {
+        positivePoints.push("الشهية جيدة، مما يدعم الصحة العامة والتغذية السليمة");
+      }
+      if (report.symptoms.length > 0) {
+        const symptomText = report.symptoms.join("، ");
+        detailedAnalysis += " تم الإبلاغ عن الأعراض التالية: " + symptomText + ".";
+        if (report.symptoms.includes("آلام في الصدر") || report.symptoms.includes("ضيق تنفس")) {
+          warnings.push("أعراض مثل آلام الصدر أو ضيق التنفس تتطلب مراجعة طبية فورية");
+        }
+        if (report.symptoms.includes("دوخة")) {
+          recommendations.push("عند الشعور بالدوخة، اجلس أو استلقِ فوراً لتجنب السقوط");
+        }
+      }
+      if (report.healthRating <= 2) {
+        summary = "هناك انخفاض ملحوظ في الصحة العامة";
+        detailedAnalysis += " التقييم الذاتي منخفض (" + report.healthRating + "/5)، مما يدل على حاجة لاهتمام إضافي.";
+        recommendations.push("ناقش هذه المشاعر مع طبيبك في أقرب وقت ممكن");
+      } else if (report.healthRating >= 4) {
+        positivePoints.push("التقييم الذاتي للصحة جيد جداً (" + report.healthRating + "/5)");
+      }
+      const hasMoxiflox = allMedications.some(med => med.name === "Moxiflox" && appData.medications[`${med.name}-${med.time}`]);
+      if (hasMoxiflox) {
+        recommendations.push("تذكر: Moxiflox يجب تناوله بعيداً عن منتجات الألبان ومضادات الحموضة بساعتين على الأقل");
+      }
+      const hasForxiga = allMedications.some(med => med.name === "Forxiga" && appData.medications[`${med.name}-${med.time}`]);
+      if (hasForxiga) {
+        recommendations.push("مع Forxiga، تأكد من شرب كمية كافية من الماء ومراقبة مستويات السكر");
+      }
+      if (!recommendations.length) {
+        recommendations.push("استمر في متابعة نظام الأدوية والصحة اليومي");
+        recommendations.push("مارس نشاطاً بدنياً خفيفاً إن أمكن لتحسين الدورة الدموية");
+        recommendations.push("اشرب كمية كافية من الماء طوال اليوم");
+      }
+      return {
+        summary: summary,
+        detailedAnalysis: detailedAnalysis,
+        recommendations: recommendations,
+        warnings: warnings,
+        positivePoints: positivePoints,
+        medicationProgress: medicationProgress,
+        painLevel: report.painLevel,
+        healthRating: report.healthRating,
+        generatedAt: new Date().toISOString()
+      };
+    }
+    function initButtons() {
+      document.getElementById('reset-day').addEventListener('click', resetDay);
+      document.getElementById('save-data').addEventListener('click', manualSaveData);
+      document.getElementById('mark-all-taken').addEventListener('click', markAllTaken);
+      document.getElementById('save-daily-calendar').addEventListener('click', saveDailyCalendar);
+      document.getElementById('analyze-with-ai').addEventListener('click', analyzeWithAI);
+      document.getElementById('clear-history').addEventListener('click', clearHistory);
+      document.getElementById('export-data').addEventListener('click', exportData);
+      document.getElementById('patient-name-input').addEventListener('change', function() {
+        appData.patientName = this.value;
+        document.getElementById('patient-name').textContent = this.value;
+        autoSaveData();
+      });
+      document.getElementById('patient-age').addEventListener('change', function() {
+        appData.patientAge = parseInt(this.value) || 65;
+        autoSaveData();
+      });
+      document.getElementById('enable-notifications').addEventListener('change', function() {
+        appData.settings.notificationsEnabled = this.value === 'on';
+        autoSaveData();
+        if (appData.settings.notificationsEnabled) ensureServiceWorkerAndPermission();
+      });
+      document.getElementById('grace-minutes').addEventListener('change', function() {
+        appData.settings.graceMinutes = Math.max(0, parseInt(this.value) || 0);
+        autoSaveData();
+      });
+      document.getElementById('caregiver-enabled').addEventListener('change', function() {
+        appData.settings.caregiverEnabled = this.value === 'on';
+        autoSaveData();
+      });
+      document.getElementById('caregiver-webhook').addEventListener('change', function() {
+        appData.settings.caregiverWebhookUrl = this.value.trim();
+        autoSaveData();
+      });
+      document.getElementById('test-notification').addEventListener('click', function() {
+        triggerPatientNotification('تنبيه تجريبي', 'هذا تنبيه تجريبي على الهاتف');
+      });
+      document.getElementById('test-caregiver').addEventListener('click', function() {
+        sendCaregiverAlert({ name: 'تنبيه تجريبي', time: 'test', hour: 0, minute: 0 }, ['Sample']);
+      });
+      document.getElementById('enable-fcm').addEventListener('change', async function() {
+        appData.settings.firebaseEnabled = this.value === 'on';
+        autoSaveData();
+        if (appData.settings.firebaseEnabled) {
+          await initFirebaseMessaging();
+        }
+      });
+      document.getElementById('fcm-vapid').addEventListener('change', function() {
+        appData.settings.firebaseVapidKey = this.value.trim();
+        autoSaveData();
+      });
+      document.getElementById('firebase-config-json').addEventListener('change', function() {
+        appData.settings.firebaseConfigJson = this.value.trim();
+        autoSaveData();
+      });
+      document.getElementById('copy-patient-token').addEventListener('click', function() {
+        const token = appData.settings.patientFcmToken || '';
+        if (!token) return;
+        navigator.clipboard.writeText(token).then(() => {
+          showNotification('تم النسخ', 'تم نسخ رمز الجهاز بنجاح', 'success');
+        });
+      });
+    }
+    function manualSaveData() {
+      autoSaveData();
+      showNotification('تم الحفظ', 'تم حفظ البيانات بنجاح!', 'success');
+    }
+    function resetDay() {
+      if (confirm('هل تريد بدء يوم جديد؟ سيتم إعادة تعيين جميع الأدوية والتقويم اليومي.')) {
+        allMedications.forEach(med => {
+          const checkbox = document.getElementById(med.id);
+          if (checkbox) {
+            checkbox.checked = false;
+            updateMedicationUI(checkbox, false);
+          }
+        });
+        document.querySelectorAll('#health-rating input').forEach(input => input.checked = false);
+        document.querySelectorAll('.pain-level').forEach(level => level.classList.remove('active'));
+        document.querySelectorAll('#sleep-quality .rating-option').forEach(option => option.classList.remove('active'));
+        document.querySelectorAll('#appetite-rating .rating-option').forEach(option => option.classList.remove('active'));
+        document.querySelectorAll('.symptom-item input').forEach(checkbox => {
+          checkbox.checked = false;
+          checkbox.closest('.symptom-item').classList.remove('active');
+        });
+        document.getElementById('daily-notes').value = '';
+        appData.medications = {};
+        appData.currentReport = {
+          date: new Date().toISOString().split('T')[0],
+          healthRating: 0,
+          painLevel: 0,
+          sleepQuality: "",
+          appetite: "",
+          symptoms: [],
+          notes: "",
+          medicationProgress: 0
+        };
+        appData.today = new Date().toDateString();
+        appData.history = [];
+        updateProgress();
+        updateHistoryList();
+        autoSaveData();
+        showNotification('يوم جديد', 'تم بدء يوم جديد بنجاح!', 'success');
+        updateReminders();
+      }
+    }
+    function markAllTaken() {
+      if (confirm('هل تريد تعليم جميع أدوية اليوم كمأخوذة؟')) {
+        allMedications.forEach(med => {
+          const checkbox = document.getElementById(med.id);
+          if (checkbox && !checkbox.checked) {
+            checkbox.checked = true;
+            updateMedicationUI(checkbox, false);
+          }
+        });
+        updateProgress();
+        autoSaveData();
+        showNotification('تم التعليم', 'تم تعليم جميع الأدوية كمأخوذة', 'success');
+        updateReminders();
+      }
+    }
+    function clearHistory() {
+      if (confirm('هل أنت متأكد من مسح سجل المتابعة؟')) {
+        appData.history = [];
+        updateHistoryList();
+        autoSaveData();
+        showNotification('تم المسح', 'تم مسح السجل بنجاح.', 'success');
+      }
+    }
+    function exportData() {
+      const exportDataObj = {
+        ...appData,
+        exportDate: new Date().toISOString(),
+        exportVersion: '1.0'
+      };
+      const dataStr = JSON.stringify(exportDataObj, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      const exportFileDefaultName = `patient_data_${new Date().toISOString().split('T')[0]}.json`;
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      showNotification('تم التصدير', 'تم تصدير البيانات بنجاح.', 'success');
+    }
+    function showNotification(title, message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#2ecc71' : type === 'error' ? '#e74c3c' : '#3498db'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        max-width: 400px;
+        animation: slideInLeft 0.3s ease;
+      `;
+      notification.innerHTML = `<strong>${title}</strong><br>${message}`;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => { document.body.removeChild(notification); }, 300);
+      }, 5000);
+    }
+    function showSaveIndicator() {
+      const indicator = document.getElementById('save-indicator');
+      indicator.classList.remove('show');
+      void indicator.offsetWidth;
+      indicator.classList.add('show');
+    }
+    window.analyzeWithAI = analyzeWithAI;
+    setInterval(() => {
+      updateReminders();
+      checkAndNotifySlots();
+      checkMissedAndAlertCaregiver();
+    }, 60000);
+    async function ensureServiceWorkerAndPermission() {
+      try {
+        if ('serviceWorker' in navigator) {
+          await navigator.serviceWorker.register('service-worker.js');
+        }
+        if (!('Notification' in window)) {
+          document.getElementById('notification-status').textContent = 'جهاز غير مدعوم';
+          document.getElementById('notification-status').style.color = 'orange';
+          return;
+        }
+        if (Notification.permission === 'default' && appData.settings.notificationsEnabled) {
+          const result = await Notification.requestPermission();
+          const el = document.getElementById('notification-status');
+          if (result === 'granted') {
+            el.textContent = 'جاهز';
+            el.style.color = 'green';
+          } else {
+            el.textContent = 'مرفوض';
+            el.style.color = 'red';
+          }
+        }
+        if (appData.settings.firebaseEnabled) {
+          await initFirebaseMessaging();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    async function triggerPatientNotification(title, body) {
+      try {
+        if (!appData.settings.notificationsEnabled) return;
+        if (Notification.permission !== 'granted') return;
+        const reg = (navigator.serviceWorker && await navigator.serviceWorker.getRegistration()) || null;
+        if (reg && reg.showNotification) {
+          reg.showNotification(title, {
+            body,
+            icon: 'icons/icon-192.png',
+            badge: 'icons/icon-192.png',
+            vibrate: [100, 50, 100]
+          });
+        } else {
+          new Notification(title, { body });
+        }
+      } catch (e) {
+        console.error('Notification error', e);
+      }
+    }
+    function checkAndNotifySlots() {
+      if (!appData.settings.notificationsEnabled) return;
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      TIME_SLOTS.forEach(slot => {
+        if (slot.hour === h && slot.minute === m) {
+          const medsInSlot = allMedications.filter(med => med.time === slot.time);
+          const untakenMeds = medsInSlot.filter(med => !appData.medications[`${med.name}-${slot.time}`]);
+          if (untakenMeds.length) {
+            const medNames = untakenMeds.map(m => m.name).join('، ');
+            triggerPatientNotification('موعد الدواء', `${slot.name}: ${medNames}`);
+          }
+        }
+      });
+    }
+    async function sendCaregiverAlert(slot, meds) {
+      try {
+        if (!appData.settings.caregiverEnabled) return;
+        const url = appData.settings.caregiverWebhookUrl;
+        if (!url) return;
+        const payload = {
+          type: 'missed_medication_alert',
+          patientName: appData.patientName,
+          date: new Date().toISOString(),
+          slot: slot,
+          medications: meds,
+          progress: appData.currentReport.medicationProgress
+        };
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error('Caregiver alert error', e);
+      }
+    }
+    function checkMissedAndAlertCaregiver() {
+      if (!appData.settings.caregiverEnabled) return;
+      const now = new Date();
+      const minutesNow = now.getHours() * 60 + now.getMinutes();
+      const grace = appData.settings.graceMinutes || 0;
+      TIME_SLOTS.forEach(slot => {
+        const slotMinutes = slot.hour * 60 + slot.minute;
+        if (minutesNow >= slotMinutes + grace) {
+          const medsInSlot = allMedications.filter(med => med.time === slot.time);
+          const untakenMeds = medsInSlot.filter(med => !appData.medications[`${med.name}-${slot.time}`]);
+          const alertKey = `${now.toDateString()}-${slot.time}`;
+          if (untakenMeds.length && !appData.settings.alertsSent[alertKey]) {
+            appData.settings.alertsSent[alertKey] = true;
+            autoSaveData();
+            sendCaregiverAlert(slot, untakenMeds.map(m => m.name));
+          }
+        }
+      });
+    }
+    async function initFirebaseMessaging() {
+      try {
+        if (!appData.settings.firebaseConfigJson) return;
+        const cfg = JSON.parse(appData.settings.firebaseConfigJson);
+        if (!firebase.apps.length) {
+          firebase.initializeApp(cfg);
+        }
+        const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+        const messaging = firebase.messaging();
+        const vapidKey = appData.settings.firebaseVapidKey || '';
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+        const token = await messaging.getToken({ vapidKey, serviceWorkerRegistration: reg });
+        appData.settings.patientFcmToken = token;
+        autoSaveData();
+        const tokenEl = document.getElementById('patient-fcm-token');
+        if (tokenEl) tokenEl.value = token;
+        messaging.onMessage((payload) => {
+          const title = payload.notification && payload.notification.title || 'إشعار';
+          const body = payload.notification && payload.notification.body || '';
+          triggerPatientNotification(title, body);
+        });
+      } catch (e) {
+        console.error('FCM init error', e);
+      }
+    }
+  </script>
 </body>
 </html>
