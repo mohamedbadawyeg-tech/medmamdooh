@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة مقدم الرعاية</title>
+  <meta name="theme-color" content="#3498db">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging-compat.js"></script>
+  <style>
+    :root { --primary:#3498db; --secondary:#2ecc71; --dark:#2c3e50; --gray:#95a5a6; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI','Tahoma','Geneva','Verdana',sans-serif; }
+    body { background: linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%); color:#333; min-height:100vh; padding:20px; }
+    .container { max-width: 1000px; margin:0 auto; }
+    header { background:white; border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); border-bottom:5px solid var(--primary); text-align:center; }
+    h1 { color:var(--dark); font-size:1.8rem; margin-bottom:8px; }
+    .card { background:white; border-radius:12px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+    .input-group { margin-bottom:12px; }
+    label { display:block; margin-bottom:6px; font-weight:bold; color:var(--dark); }
+    input, textarea, select { width:100%; padding:10px 12px; border:2px solid #ddd; border-radius:8px; font-size:1rem; transition:border 0.3s; }
+    input:focus, textarea:focus, select:focus { border-color:var(--primary); outline:none; }
+    .btn { display:inline-block; background:var(--primary); color:white; border:none; padding:10px 18px; border-radius:8px; font-size:0.95rem; cursor:pointer; transition:all 0.3s ease; font-weight:bold; margin:5px; }
+    .btn:hover { background:#2980b9; transform:translateY(-2px); box-shadow:0 7px 14px rgba(50,50,93,0.1),0 3px 6px rgba(0,0,0,0.08); }
+    .btn-success { background:var(--secondary); }
+    .section-title { display:flex; align-items:center; gap:8px; color:var(--dark); margin-bottom:12px; }
+    .status { padding:10px; border-radius:8px; background:#f7f9fc; border-right:4px solid var(--primary); margin-bottom:12px; }
+    .token-row { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
+    .inbox { max-height:260px; overflow:auto; border:1px solid #eee; border-radius:8px; }
+    .msg { padding:10px; border-bottom:1px solid #f1f1f1; }
+    .msg strong { display:block; color:#2c3e50; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-user-nurse"></i> لوحة مقدم الرعاية</h1>
+      <p>متابعة حالة المريض واستقبال التنبيهات عبر FCM</p>
+    </header>
+    <div class="card">
+      <div class="section-title"><i class="fas fa-id-card"></i><span>بيانات المريض</span></div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label for="patient-name-care">اسم المريض</label>
+          <input type="text" id="patient-name-care" placeholder="أدخل اسم المريض">
+        </div>
+        <div class="input-group">
+          <label for="patient-token">رمز جهاز المريض (FCM)</label>
+          <input type="text" id="patient-token" placeholder="ألصق رمز الجهاز المنسوخ من تطبيق المريض">
+        </div>
+      </div>
+      <button class="btn" id="save-patient"><i class="fas fa-save"></i> حفظ البيانات</button>
+    </div>
+    <div class="card">
+      <div class="section-title"><i class="fas fa-cloud"></i><span>إعدادات Firebase Cloud Messaging</span></div>
+      <div class="grid-2">
+        <div class="input-group">
+          <label for="enable-fcm-care">تفعيل FCM</label>
+          <select id="enable-fcm-care">
+            <option value="off">غير مفعّل</option>
+            <option value="on">مفعّل</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="fcm-vapid-care">VAPID Key</label>
+          <input type="text" id="fcm-vapid-care" placeholder="ضع مفاتيح VAPID العامة">
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="firebase-config-care">Firebase Config (JSON)</label>
+        <textarea id="firebase-config-care" rows="4" placeholder='{"apiKey":"","authDomain":"","projectId":"","messagingSenderId":"","appId":""}'></textarea>
+      </div>
+      <div class="token-row">
+        <div class="input-group" style="margin:0;">
+          <label>رمز جهاز مقدم الرعاية (FCM)</label>
+          <input type="text" id="caregiver-token" readonly placeholder="سيظهر الرمز بعد التفعيل">
+        </div>
+        <button class="btn" id="copy-caregiver-token"><i class="fas fa-copy"></i> نسخ الرمز</button>
+      </div>
+      <button class="btn" id="activate-fcm"><i class="fas fa-bell"></i> تفعيل واستقبال الإشعارات</button>
+    </div>
+    <div class="card">
+      <div class="section-title"><i class="fas fa-inbox"></i><span>الوارد</span></div>
+      <div class="status" id="status-line">الحالة: غير مفعّل</div>
+      <div class="inbox" id="inbox"></div>
+      <button class="btn btn-success" id="clear-inbox"><i class="fas fa-trash"></i> مسح الوارد</button>
+    </div>
+  </div>
+  <script>
+    const careData = JSON.parse(localStorage.getItem('caregiverPanel')) || {
+      patientName: '',
+      patientToken: '',
+      firebaseEnabled: false,
+      firebaseVapidKey: '',
+      firebaseConfigJson: '',
+      caregiverToken: ''
+    };
+    const inboxEl = document.getElementById('inbox');
+    const statusEl = document.getElementById('status-line');
+    document.getElementById('patient-name-care').value = careData.patientName || '';
+    document.getElementById('patient-token').value = careData.patientToken || '';
+    document.getElementById('enable-fcm-care').value = careData.firebaseEnabled ? 'on' : 'off';
+    document.getElementById('fcm-vapid-care').value = careData.firebaseVapidKey || '';
+    document.getElementById('firebase-config-care').value = careData.firebaseConfigJson || '';
+    document.getElementById('caregiver-token').value = careData.caregiverToken || '';
+    document.getElementById('save-patient').addEventListener('click', function() {
+      careData.patientName = document.getElementById('patient-name-care').value.trim();
+      careData.patientToken = document.getElementById('patient-token').value.trim();
+      localStorage.setItem('caregiverPanel', JSON.stringify(careData));
+      statusEl.textContent = 'تم حفظ بيانات المريض';
+    });
+    document.getElementById('enable-fcm-care').addEventListener('change', function() {
+      careData.firebaseEnabled = this.value === 'on';
+      localStorage.setItem('caregiverPanel', JSON.stringify(careData));
+    });
+    document.getElementById('fcm-vapid-care').addEventListener('change', function() {
+      careData.firebaseVapidKey = this.value.trim();
+      localStorage.setItem('caregiverPanel', JSON.stringify(careData));
+    });
+    document.getElementById('firebase-config-care').addEventListener('change', function() {
+      careData.firebaseConfigJson = this.value.trim();
+      localStorage.setItem('caregiverPanel', JSON.stringify(careData));
+    });
+    document.getElementById('copy-caregiver-token').addEventListener('click', function() {
+      const token = document.getElementById('caregiver-token').value;
+      if (!token) return;
+      navigator.clipboard.writeText(token).then(() => {
+        statusEl.textContent = 'تم نسخ رمز مقدم الرعاية';
+      });
+    });
+    document.getElementById('clear-inbox').addEventListener('click', function() {
+      inboxEl.innerHTML = '';
+      statusEl.textContent = 'تم مسح الوارد';
+    });
+    document.getElementById('activate-fcm').addEventListener('click', async function() {
+      if (!careData.firebaseEnabled) { statusEl.textContent = 'فعّل FCM أولاً'; return; }
+      try {
+        const cfg = JSON.parse(careData.firebaseConfigJson || '{}');
+        if (!firebase.apps.length) firebase.initializeApp(cfg);
+        const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+        const messaging = firebase.messaging();
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') { statusEl.textContent = 'تم رفض إذن الإشعارات'; return; }
+        const token = await messaging.getToken({ vapidKey: careData.firebaseVapidKey || '', serviceWorkerRegistration: reg });
+        careData.caregiverToken = token;
+        localStorage.setItem('caregiverPanel', JSON.stringify(careData));
+        document.getElementById('caregiver-token').value = token;
+        statusEl.textContent = 'تم التفعيل واستقبال الإشعارات';
+        messaging.onMessage((payload) => {
+          const title = (payload.notification && payload.notification.title) || 'إشعار';
+          const body = (payload.notification && payload.notification.body) || '';
+          const div = document.createElement('div');
+          div.className = 'msg';
+          div.innerHTML = `<strong>${title}</strong><span>${body}</span>`;
+          inboxEl.prepend(div);
+          new Notification(title, { body });
+        });
+      } catch (e) {
+        statusEl.textContent = 'خطأ في التفعيل';
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+</html>
